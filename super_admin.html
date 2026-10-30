@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b2a5b">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Super Admin · Community Portal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--blue:#1e6bff;--green:#12a150;--orange:#ff8a00;--purple:#7c3aed;--red:#e5484d;--gold:#c99a2e;--ink:#0f172a;--muted:#64748b;--line:#e6eaf2;--bg:#f4f7fc;--navy:#0b2a5b;--blue-t:#eaf1ff;--green-t:#e8f8ef;--orange-t:#fff3e2;--purple-t:#f1eaff;--red-t:#fdecec;--gold-t:#fbf4df;--side:264px}
+html,body{overflow-x:hidden;user-select:none;-webkit-user-select:none}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;min-height:100vh}
+@media(min-width:960px){html,body{user-select:auto;-webkit-user-select:auto}}
+button,input,select,textarea{font:inherit;color:inherit}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+svg.i .s{fill:currentColor;fill-opacity:.18;stroke-opacity:.55}
+img.ic{width:100%;height:100%;object-fit:cover;display:block}
+#topbar{position:fixed;left:0;top:0;height:3px;width:100%;z-index:300;overflow:hidden;display:none}
+#topbar i{display:block;height:100%;width:40%;background:linear-gradient(90deg,var(--blue),var(--green),var(--gold));animation:slide 1s linear infinite}
+@keyframes slide{from{transform:translateX(-100%)}to{transform:translateX(260%)}}
+#boot{position:fixed;inset:0;background:#fff;z-index:400;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}
+#boot.gone{display:none}
+#boot .bt{font-size:17px;font-weight:600}
+#boot .bs{font-size:13px;color:var(--muted)}
+#boot .bar{width:min(340px,80vw);height:10px;border-radius:99px;background:#eef1f6;overflow:hidden}
+#boot .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .4s ease}
+.side{position:fixed;inset:0 auto 0 0;width:var(--side);background:#fff;border-right:1px solid var(--line);z-index:130;display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:16px 0 46px -28px rgba(15,23,42,.55)}
+.side.open{transform:none}
+.side-top{display:flex;align-items:center;gap:10px;padding:14px 12px;background:linear-gradient(135deg,#071c40,#0f3d7f 55%,#1e6bff);color:#fff}
+.side-logo{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.38);display:grid;place-items:center;overflow:hidden;flex:0 0 42px}
+.side-logo img{width:100%;height:100%;object-fit:cover}
+.side-brand{flex:1;min-width:0}
+.side-brand b{display:block;font-size:14.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side-brand span{font-size:11px;opacity:.78;font-weight:600}
+#sideClose{width:34px;height:34px;border-radius:10px;border:0;background:rgba(255,255,255,.16);color:#fff;display:grid;place-items:center;cursor:pointer;flex:0 0 34px}
+.side-search{padding:12px 12px 2px}
+.side-search input{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:11px;background:#f7f9fd;font-size:13px;outline:none}
+.side-nav{flex:1;overflow-y:auto;padding:4px 10px 18px}
+.sgroup{font-size:10.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:#94a3b8;padding:14px 10px 6px}
+.sitem{display:flex;align-items:center;gap:11px;width:100%;padding:8px 10px;border:0;background:none;border-radius:12px;cursor:pointer;text-align:left;font-size:14px;font-weight:600;color:#334155;position:relative;transition:background .15s,color .15s}
+.sitem:hover{background:#f2f7ff;color:var(--navy)}
+.sitem .si{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:#f1f5fb;color:#5b6b85;flex:0 0 36px}
+.sitem .si svg.i{width:20px;height:20px}
+.sitem .sl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sitem.on{background:linear-gradient(90deg,#eaf1ff,#f7faff);color:var(--blue);font-weight:800}
+.sitem.on .si{background:linear-gradient(135deg,#1e6bff,#4f8dff);color:#fff}
+.sitem.logout{color:var(--red)}
+.sitem.logout .si{background:var(--red-t);color:var(--red)}
+.side-foot{padding:10px 14px 14px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);text-align:center}
+#scrim{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:120;opacity:0;pointer-events:none;transition:opacity .25s}
+#scrim.on{opacity:1;pointer-events:auto}
+.hd{position:relative;overflow:hidden;padding:12px 14px 22px;text-align:center;color:#fff;background:linear-gradient(135deg,#071c40 0%,#0f3d7f 48%,#0a2a5c 100%)}
+.hd::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(130% 90% at 50% -20%,rgba(96,170,255,.55),transparent 62%)}
+.hd>*{position:relative;z-index:2}
+.hd .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.menubtn{width:42px;height:42px;border-radius:12px;flex:0 0 42px;display:grid;place-items:center;cursor:pointer;color:#fff;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.16)}
+.menubtn svg.i{width:22px;height:22px}
+.avatar{width:42px;height:42px;border-radius:50%;flex:0 0 42px;display:grid;place-items:center;cursor:pointer;border:2px solid rgba(255,255,255,.85);background:linear-gradient(135deg,#94a3b8,#475569);color:#fff;overflow:hidden;font-weight:700;font-size:16px}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.seal{width:76px;height:76px;margin:4px auto 0;border-radius:50%;background:rgba(255,255,255,.97);border:2px solid rgba(255,255,255,.7);display:grid;place-items:center;overflow:hidden;color:var(--navy)}
+.seal img{width:100%;height:100%;object-fit:cover}
+.orgname{margin-top:10px;font-size:clamp(25px,5vw,34px);font-weight:900;color:#fff;line-height:1.16}
+.role{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 14px;border-radius:99px;background:rgba(255,255,255,.16);color:#fff;font-weight:700;font-size:13px;border:1px solid rgba(255,255,255,.42)}
+.role svg.i{width:16px;height:16px}
+.tag{margin-top:7px;color:#9fe8bd;font-weight:600;font-size:13px}
+.pagewrap{transition:margin-left .3s cubic-bezier(.4,0,.2,1)}
+.main{padding:14px 12px 40px}
+.pagehead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0 4px;border-left:5px solid var(--blue);padding-left:10px}
+.pagehead h2{font-size:22px;font-weight:800;color:var(--navy)}
+.psub{color:var(--muted);font-size:13px;margin:0 0 12px}
+h3.sec{font-size:15px;font-weight:700;margin:18px 0 10px;color:var(--navy);display:flex;align-items:center;gap:8px}
+h3.sec::before{content:'';width:4px;height:18px;border-radius:4px;background:var(--blue)}
+.muted{color:var(--muted)}
+.loading,.empty{padding:26px;text-align:center;color:var(--muted)}
+.errbox{padding:16px;border-radius:14px;background:var(--red-t);color:#8a1c20;border:1px solid #f6c6c8;line-height:1.6}
+.big3{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.big3 .big:last-child{grid-column:1/-1}
+.big{border:0;border-radius:18px;padding:14px;color:#fff;text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px;min-height:96px;position:relative;box-shadow:0 14px 24px -16px rgba(15,23,42,.5)}
+.big .ic{width:58px;height:58px;border-radius:16px;background:rgba(255,255,255,.22);display:grid;place-items:center;flex:0 0 58px;overflow:hidden}
+.big .ic svg.i{width:30px;height:30px}
+.big .lb{font-size:13px;opacity:.95;display:block}
+.big b{display:block;font-size:30px;font-weight:800;line-height:1.1}
+.big .go{position:absolute;right:12px;top:12px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.25);display:grid;place-items:center}
+.big .go svg.i{width:16px;height:16px}
+.g-blue{background:linear-gradient(135deg,#1e6bff,#4f8dff)}
+.g-orange{background:linear-gradient(135deg,#ff8a00,#ffb020)}
+.g-purple{background:linear-gradient(135deg,#7c3aed,#a86bff)}
+.g-green{background:linear-gradient(135deg,#12a150,#34c77a)}
+.sec-title{display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px}
+.sec-title h3{font-size:16px;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:8px}
+.sec-title h3::before{content:'';width:4px;height:18px;border-radius:4px;background:var(--blue)}
+.sec-title a{font-size:13px;color:var(--blue);font-weight:700;cursor:pointer;text-decoration:none}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{border-radius:16px;padding:12px;border:1px solid transparent;text-align:left;cursor:pointer;background:#fff;display:flex;align-items:center;gap:10px;min-height:76px}
+.tile .ti{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;flex:0 0 52px;overflow:hidden;background:#fff}
+.tile .ti svg.i{width:28px;height:28px}
+.tile .tx{flex:1;min-width:0}
+.tile .lb{font-size:12.5px;color:var(--ink);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile b{font-size:21px;font-weight:800;display:block}
+.t-blue{background:var(--blue-t);border-color:#cfe0ff}.t-blue b{color:var(--blue)}
+.t-green{background:var(--green-t);border-color:#c4ebd4}.t-green b{color:var(--green)}
+.t-orange{background:var(--orange-t);border-color:#ffdcae}.t-orange b{color:var(--orange)}
+.t-purple{background:var(--purple-t);border-color:#dccffd}.t-purple b{color:var(--purple)}
+.t-red{background:var(--red-t);border-color:#f6c6c8}.t-red b{color:var(--red)}
+.t-gold{background:var(--gold-t);border-color:#f0dfb0}.t-gold b{color:var(--gold)}
+.tile.wide{grid-column:1/-1}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:14px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.inp{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;min-width:0;width:100%}
+.inp:focus{outline:2px solid #bcd3ff;border-color:var(--blue)}
+.btn{border:0;border-radius:12px;padding:10px 14px;background:var(--blue);color:#fff;cursor:pointer;font-weight:700;font-size:13px;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.green{background:var(--green)}.btn.orange{background:var(--orange)}.btn.purple{background:var(--purple)}.btn.red{background:var(--red)}.btn.gold{background:var(--gold)}
+.btn.light{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:7px 10px;font-size:12px;border-radius:10px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chipbtn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;cursor:pointer;font-size:12.5px}
+.chipbtn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chip{display:inline-block;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700}
+.c-paid{background:#d9f5e4;color:#127a45}.c-due{background:#fde0e1;color:#b42328}.c-imam{background:var(--orange-t);color:#b35f00}.c-blk{background:#e5e7eb;color:#374151}.c-role{background:var(--blue-t);color:var(--blue)}
+.wrap{overflow-x:auto}
+table.t{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;min-width:640px}
+table.t th{text-align:left;padding:9px 8px;background:#f7f9fd;color:var(--muted);font-weight:700;font-size:12px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.t td{padding:9px 8px;border-bottom:1px solid #eef1f6;vertical-align:middle;white-space:nowrap}
+tr.row-paid td{background:#f3fbf6}tr.row-due td{background:#fff5f5}
+.nm{color:var(--blue);font-weight:700;cursor:pointer;background:none;border:0;text-align:left}
+.mono{font-family:"Courier New",monospace;font-size:12.5px}
+.acts{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.cl{display:inline-flex;align-items:center;gap:5px;text-decoration:none;font-size:12.5px;padding:7px 11px;border-radius:10px;color:#fff;font-weight:700}
+.cl.call{background:var(--blue)}.cl.wa{background:#25a244}
+.cl svg.i{width:16px;height:16px}
+.profile{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.dp{width:132px;height:132px;border-radius:50%;background:linear-gradient(135deg,var(--blue-t),#dfe9ff);display:grid;place-items:center;font-size:44px;font-weight:800;color:var(--blue);overflow:hidden;border:4px solid #fff;box-shadow:0 12px 24px -12px var(--blue)}
+.dp[data-act]{cursor:pointer}
+.dp img{width:100%;height:100%;object-fit:cover}
+.appid{font-size:22px;font-weight:800;letter-spacing:1px;color:var(--navy);font-family:Arial,sans-serif}
+.appid small{display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase}
+.pname{font-size:20px;font-weight:800;color:var(--navy)}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:12px;text-align:left}
+.info div span{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.info div b{font-weight:600;word-break:break-word}
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.sumc{border-radius:16px;padding:14px;color:#fff}
+.sumc span{font-size:12px;opacity:.95}.sumc b{display:block;font-size:20px;margin-top:4px}
+.creds{display:grid;grid-template-columns:1fr;gap:10px}
+.cred{border:1px dashed #cbd5e1;border-radius:12px;padding:10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.cred span{font-size:11.5px;color:var(--muted)}
+.cred b{display:block;font-family:"Courier New",monospace;font-size:16px}
+.fgrid{display:grid;grid-template-columns:1fr;gap:10px}
+.fgrid.two{grid-template-columns:1fr 1fr}
+.fl{font-size:12px;color:var(--muted);display:block;margin-bottom:4px;font-weight:600}
+.fl textarea{min-height:90px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;resize:vertical;width:100%}
+.hint{font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:8px}
+.pbar{height:14px;border-radius:99px;background:#eef1f6;overflow:hidden;margin:8px 0}
+.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .35s ease}
+.pen-row{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px dashed #e6eaf2;font-size:13px}
+.pen-box{border:2px solid #f6c6c8;background:#fff8f8}
+.rc-notice{background:#fffbe6;border:1px solid #f0dfb0;border-radius:14px;padding:12px;margin-bottom:10px}
+.money-graph{margin:10px 0}
+.money-bar{display:flex;height:28px;border-radius:14px;overflow:hidden;background:#eef1f6}
+.money-bar>div{transition:width .5s ease}
+.money-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;justify-content:center;margin-top:10px}
+.money-legend .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.money-net{text-align:center;margin-top:14px;font-size:22px;font-weight:800}
+.icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px}
+.icon-box{border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:76px;overflow:hidden}
+.icon-box:hover{border-color:var(--blue);background:#f7faff}
+.icon-box svg.i{width:32px;height:32px;color:var(--muted)}
+.icon-box img{width:32px;height:32px;object-fit:cover;border-radius:8px}
+.icon-box span{font-size:10px;color:var(--muted);font-weight:600;text-align:center;line-height:1.2}
+.icon-box.has{border-color:#cfe0ff;background:var(--blue-t)}
+#ov{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:flex-end;justify-content:center;z-index:200}
+#ov.open{display:flex}
+#ov .box{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:640px;max-height:94vh;overflow:auto;padding:18px 16px 22px;position:relative}
+#ov .box.wide{max-width:900px}
+#ov .ttl{font-size:17px;font-weight:800;margin-bottom:12px;padding-right:34px;color:var(--navy)}
+#ov .x{position:absolute;right:12px;top:12px;border:0;background:#f1f5f9;width:32px;height:32px;border-radius:50%;cursor:pointer;display:grid;place-items:center;font-size:18px}
+#ov .foot{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}
+@media(min-width:700px){#ov{align-items:center}#ov .box{border-radius:20px}}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 16px;border-radius:12px;font-size:13px;display:none;z-index:260;max-width:92vw;text-align:center}
+.cred-box{background:#0f172a;color:#fff;border-radius:14px;padding:14px;display:grid;gap:10px}
+.cred-box div{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.cred-box b{font-family:"Courier New",monospace;font-size:17px;word-break:break-all}
+.cred-box small{color:#94a3b8;font-size:11px;text-transform:uppercase;display:block}
+@media(min-width:900px){.hd{padding:16px 22px 26px}.big3{grid-template-columns:repeat(3,1fr)}.tiles{grid-template-columns:repeat(3,1fr)}.main{max-width:1100px;margin:0 auto}}
+@media(min-width:960px){.side{transform:none}body.side-closed .side{transform:translateX(-100%)}.pagewrap{margin-left:var(--side)}body.side-closed .pagewrap{margin-left:0}#menuBtn{display:none}body.side-closed #menuBtn{display:grid}#scrim{display:none}}
+</style>
+</head>
+<body>
+<div id="topbar"><i></i></div>
+<div id="boot"><div class="bt" id="bootT">Connecting…</div><div class="bar"><i id="bootBar"></i></div><div class="bs" id="bootS">Please wait</div></div>
+<aside class="side" id="side">
+  <div class="side-top"><div class="side-logo" id="sideLogo"></div><div class="side-brand"><b id="sideName">Community</b><span>Super Admin</span></div>
+  <button id="sideClose"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="side-search"><input id="navSearch" placeholder="Search menu…" autocomplete="off"></div>
+  <nav class="side-nav" id="sideNav"></nav>
+  <div class="side-foot">Ilm • Iman • Seva</div>
+</aside>
+<div id="scrim"></div>
+<div class="pagewrap">
+  <header class="hd">
+    <div class="hd-pattern"></div>
+    <div class="row">
+      <button class="menubtn" id="menuBtn"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn light sm" onclick="goPage('index.html?stay=1')">Login page</button>
+        <button class="avatar" id="av"></button>
+      </div>
+    </div>
+    <div class="seal" id="seal"></div>
+    <div class="orgname" id="orgName">Community</div>
+    <div class="role"><svg class="i" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span id="roleName">Super Admin</span></div>
+    <div class="tag">Ilm • Iman • Seva</div>
+  </header>
+  <main class="main" id="main"><div class="loading">Loading…</div></main>
+</div>
+<div id="ov"><div class="box" id="ovBox"><button class="x noprint" data-act="close">×</button><div class="ttl" id="ovT"></div><div id="ovB"></div><div class="foot" id="ovF"></div></div></div>
+<input type="file" id="dpFile" accept="image/*" style="display:none">
+<div class="toast" id="toast"></div>
+
+<!-- Scripts -->
+<script src="api.js"></script>
+<script src="receipt.js"></script>
+<script>
+/* ============ ICONS ============ */
+const IC = {
+  dashboard:'<rect x="3" y="3" width="8" height="8" rx="2.4"/><rect x="13" y="3" width="8" height="8" rx="2.4" class="s"/><rect x="3" y="13" width="8" height="8" rx="2.4" class="s"/><rect x="13" y="13" width="8" height="8" rx="2.4"/>',
+  users:'<circle cx="9.5" cy="8" r="3.6"/><path d="M2.8 20.2c.5-3.6 3.2-5.9 6.7-5.9s6.2 2.3 6.7 5.9"/><circle cx="17.5" cy="9" r="2.6" class="s"/><path d="M16.4 14.6c2.9.2 5 2.2 5.5 5.4" class="s"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c.8-4.3 3.9-6.6 7.5-6.6s6.7 2.3 7.5 6.6"/>',
+  imam:'<circle cx="12" cy="10" r="3.4"/><path d="M6.8 20.6c.6-3.8 2.8-5.9 5.2-5.9s4.6 2.1 5.2 5.9"/><path d="M8.6 7.4c.7-2.2 2-3.4 3.4-3.4s2.7 1.2 3.4 3.4"/><path d="M8.4 7.4h7.2" class="s"/>',
+  members:'<circle cx="10.5" cy="8" r="3.4"/><path d="M3.6 20.4c.7-3.8 3.4-6 6.9-6 1.2 0 2.3.3 3.3.9"/><path d="M17 13.6l1.2 2.3 2.6.4-1.9 1.8.5 2.6-2.4-1.3-2.4 1.3.5-2.6-1.9-1.8 2.6-.4z" class="s"/>',
+  admin:'<path d="M12 3l7.5 3v5.4c0 5-3.4 8.4-7.5 9.6-4.1-1.2-7.5-4.6-7.5-9.6V6z"/><path d="M12 8l1.1 2.3 2.5.3-1.8 1.8.4 2.5-2.2-1.2-2.2 1.2.4-2.5-1.8-1.8 2.5-.3z" class="s"/>',
+  madrasa:'<path d="M12 6.6C10.3 5 8 4.4 4 4.4v14.2c4 0 6.3.6 8 2.1 1.7-1.5 4-2.1 8-2.1V4.4c-4 0-6.3.6-8 2.2z"/><path d="M12 6.6v14.1" class="s"/>',
+  masjid:'<path d="M4.5 20.5v-6.8c0-4.2 3.4-7.3 7.5-7.3s7.5 3.1 7.5 7.3v6.8"/><path d="M2.5 20.5h19"/><path d="M12 2.8v2.2"/><path d="M9.6 20.5v-3.3a2.4 2.4 0 0 1 4.8 0v3.3" class="s"/><path d="M3.2 20.5v-4M20.8 20.5v-4" class="s"/>',
+  eidgah:'<path d="M3.5 20.5v-7.2a8.5 8.5 0 0 1 17 0v7.2"/><path d="M2 20.5h20"/><path d="M9 20.5v-4.2a3 3 0 0 1 6 0v4.2" class="s"/>',
+  kabristan:'<path d="M7.5 20.5V11a4.5 4.5 0 0 1 9 0v9.5"/><path d="M5 20.5h14"/><path d="M13.6 6.6a2.4 2.4 0 1 0 0 3.8 3 3 0 0 1 0-3.8z" class="s"/>',
+  search:'<circle cx="11" cy="11" r="6.8"/><path d="M20.5 20.5L16 16"/>',
+  import:'<path d="M12 3.5v10"/><path d="M8.2 10.2L12 14l3.8-3.8"/><path d="M4.5 16.5v2.2a2.3 2.3 0 0 0 2.3 2.3h10.4a2.3 2.3 0 0 0 2.3-2.3v-2.2"/>',
+  download:'<path d="M12 3.5v10"/><path d="M8.2 10.2L12 14l3.8-3.8"/><path d="M4.5 16.5v2.2a2.3 2.3 0 0 0 2.3 2.3h10.4a2.3 2.3 0 0 0 2.3-2.3v-2.2"/>',
+  rates:'<path d="M3.5 12.4V4.8a1.3 1.3 0 0 1 1.3-1.3h7.6l8.1 8.1-8.9 8.9z"/><circle cx="8.2" cy="8.2" r="1.5" class="s"/>',
+  settings:'<path d="M4 7.5h9M17.5 7.5H20M4 16.5h2.5M11 16.5h9"/><circle cx="15" cy="7.5" r="2.4"/><circle cx="8.5" cy="16.5" r="2.4"/>',
+  profile:'<circle cx="12" cy="8.2" r="4"/><path d="M4.5 20.5c.9-4.2 3.9-6.4 7.5-6.4s6.6 2.2 7.5 6.4"/>',
+  logout:'<path d="M14.5 4.5h3.2a2.3 2.3 0 0 1 2.3 2.3v10.4a2.3 2.3 0 0 1-2.3 2.3h-3.2"/><path d="M10 16.2L5.8 12 10 7.8"/><path d="M5.8 12H15"/>',
+  phone:'<path d="M21 16.6v2.6a2 2 0 0 1-2.2 2 19.7 19.7 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.7 19.7 0 0 1 1.1 3.5 2 2 0 0 1 3.1 1.3h2.6a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L6.7 9.3a16 16 0 0 0 6 6l1.5-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>',
+  chat:'<path d="M20.5 11.7a8.2 8.2 0 0 1-11.9 7.3L3.5 20.5l1.6-4.9A8.2 8.2 0 1 1 20.5 11.7z"/>',
+  money:'<rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.8" class="s"/><path d="M6 10v4M18 10v4" class="s"/>',
+  hourglass:'<path d="M6.5 2.5h11M6.5 21.5h11"/><path d="M8 2.5c0 4.6 4 6.2 4 9.5s-4 4.9-4 9.5"/><path d="M16 2.5c0 4.6-4 6.2-4 9.5s4 4.9 4 9.5"/>',
+  alert:'<path d="M12 3.5L21.5 20H2.5z"/><path d="M12 9.5v4.5M12 17.5v.2"/>',
+  check:'<path d="M4.5 12.5l5 5 10-11"/>',
+  eye:'<path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  print:'<path d="M6.5 9V3h11v6"/><path d="M6.5 18H4.6A2.1 2.1 0 0 1 2.5 15.9v-4.8A2.1 2.1 0 0 1 4.6 9h14.8a2.1 2.1 0 0 1 2.1 2.1v4.8a2.1 2.1 0 0 1-2.1 2.1h-1.9"/><rect x="6.5" y="14.5" width="11" height="7" rx="1"/>',
+  edit:'<path d="M12 20.5h9"/><path d="M16.7 3.3a2.3 2.3 0 0 1 3.3 3.3L7.4 19.2 3 20.5l1.3-4.4z"/>',
+  trash:'<path d="M3.5 6.5h17M9 6.5V3.8h6v2.7"/><path d="M6 6.5l1 14h10l1-14"/><path d="M10 10.5v6M14 10.5v6" class="s"/>',
+  lock:'<rect x="4.5" y="10.5" width="15" height="10" rx="2.4"/><path d="M7.8 10.5V7.2a4.2 4.2 0 0 1 8.4 0v3.3"/>',
+  refresh:'<path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1"/><path d="M20.5 3.5v6h-6"/>',
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  plus:'<path d="M12 4.5v15M4.5 12h15"/>',
+  arrow:'<path d="M4.5 12h15M13.5 6l6 6-6 6"/>',
+  rupee:'<path d="M6.5 3.5h11M6.5 8h11M9 3.5c4 0 6 1.8 6 4.5s-2 4.5-6 4.5l7 8"/>',
+  mosque:'<path d="M3.5 21V11.5C3.5 7 7.3 4 12 4s8.5 3 8.5 7.5V21"/><path d="M2 21h20"/><path d="M12 2v2"/><path d="M9.5 21v-3.5a2.5 2.5 0 0 1 5 0V21" class="s"/>'
+};
+const ic = (n, size) => `<svg class="i" viewBox="0 0 24 24"${size ? ` width="${size}" height="${size}"` : ''}>${IC[n] || IC.user}</svg>`;
+let ICONS = {};
+function iconHtml(key, fallback) {
+  const url = ICONS[key];
+  if (!url) return ic(fallback || key);
+  const fb = ic(fallback || key).replace(/"/g, '&quot;');
+  return `<img class="ic" src="${esc(url)}" alt="" onerror="this.outerHTML='${fb}'">`;
+}
+function linkify(text) {
+  if (!text) return '';
+  const urlRe = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+  return esc(text).replace(urlRe, '<a href="$1" target="_blank" style="color:#1e6bff;text-decoration:underline">$1</a>').replace(/\n/g, '<br>');
+}
+
+/* ============ HELPERS ============ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const inr = n => '₹' + Number(n || 0).toLocaleString('en-IN');
+const LS_S = 'pl_session';
+let TOKEN = null, ME = null, D = { view: 'dash', arg: {} };
+let PEOPLE_CACHE = [], ADMINS = [], ADMIN_LIST = [], RATES = null, CUR_PERSON = null;
+let MY_PHOTO = '', SHOW_CREDS = false, IMPORTING = false;
+let CSV_TEXT = null, CSV_NAME = '', CSV_ROWS = 0, DP_PENDING = null, BUSY = 0;
+const SECS = { madrasa: 'Madrasa', masjid: 'Masjid', eidgah: 'Eidgah', kabristan: 'Kabristan' };
+const LBL = { user: 'User', imam: 'Imam', member: 'Member', admin: 'Admin', super_admin: 'Super Admin' };
+const MODES = ['Cash', 'UPI', 'Bank Transfer', 'Cheque'];
+const ICON_FIELDS = [['dashboard','Dashboard'],['users','Users'],['imam','Imams'],['members','Members'],['admin','Admin'],['madrasa','Madrasa'],['masjid','Masjid'],['eidgah','Eidgah'],['kabristan','Kabristan'],['search','Search'],['import','Import'],['rates','Rates'],['settings','Settings'],['profile','Profile']];
+const val = id => { const e = document.getElementById(id); return e ? e.value : ''; };
+const todayIso = () => new Date().toISOString().slice(0, 10);
+
+async function compressImage(file, maxDim = 900, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if (w > maxDim || h > maxDim) { const r = Math.min(maxDim / w, maxDim / h); w = Math.round(w * r); h = Math.round(h * r); }
+      const cvs = document.createElement('canvas'); cvs.width = w; cvs.height = h;
+      const ctx = cvs.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h);
+      cvs.toBlob(blob => {
+        if (!blob) return reject(new Error('Compression failed'));
+        const reader = new FileReader();
+        reader.onload = () => resolve({ b64: String(reader.result).split(',')[1], mime: blob.type || 'image/jpeg', name: (file.name || 'photo').replace(/\.[^.]+$/, '') + '.jpg', size: blob.size });
+        reader.readAsDataURL(blob);
+      }, 'image/jpeg', quality);
+    };
+    img.onerror = () => { URL.revokeObjectURL(objectUrl); reject(new Error('Invalid image file')); };
+    img.src = objectUrl;
+  });
+}
+
+function drawMoneyBar(collected, expenses, salary) {
+  const total = Math.max(collected, 1); const expPct = Math.min(100, (expenses / total) * 100); const salPct = Math.min(100 - expPct, (salary / total) * 100); const balPct = Math.max(0, 100 - expPct - salPct); const net = collected - expenses - salary;
+  return `<div class="money-graph"><div class="money-bar">${expPct > 0 ? `<div style="width:${expPct}%;background:linear-gradient(90deg,#e5484d,#ff7a7d)"></div>` : ''}${salPct > 0 ? `<div style="width:${salPct}%;background:linear-gradient(90deg,#7c3aed,#a86bff)"></div>` : ''}${balPct > 0 ? `<div style="width:${balPct}%;background:linear-gradient(90deg,#12a150,#34c77a)"></div>` : ''}</div><div class="money-legend"><span><span class="dot" style="background:#e5484d"></span>Expenses ${inr(expenses)}</span><span><span class="dot" style="background:#7c3aed"></span>Salary ${inr(salary)}</span><span><span class="dot" style="background:#12a150"></span>Balance ${inr(Math.max(0, net))}</span></div><div class="money-net" style="color:${net >= 0 ? 'var(--green)' : 'var(--red)'}">Net Balance: ${inr(net)}</div></div>`;
+}
+
+function busyStart() { BUSY++; $('#topbar').style.display = 'block'; }
+function busyEnd() { BUSY = Math.max(0, BUSY - 1); if (!BUSY) $('#topbar').style.display = 'none'; }
+function bootProgress(p, t, s) { $('#bootBar').style.width = p + '%'; if (t) $('#bootT').textContent = t; if (s) $('#bootS').textContent = s; }
+function bootDone() { $('#boot').classList.add('gone'); }
+function showError(t) { $('#main').innerHTML = '<div class="errbox"><b>Page could not load.</b><br>' + esc(t) + '</div>'; }
+window.onerror = m => showError('Script error: ' + m);
+
+async function api(fn, ...a) {
+  busyStart();
+  try {
+    const r = await apiCall(fn, [TOKEN, ...a]);
+    if (r && r.expired) { await leave(true); throw new Error('expired'); }
+    if (r && r.ok === false) throw new Error(r.msg || 'Something went wrong.');
+    return r;
+  } finally { busyEnd(); }
+}
+function toast(m) { const el = $('#toast'); el.textContent = m; el.style.display = 'block'; clearTimeout(toast._t); toast._t = setTimeout(() => el.style.display = 'none', 2600); }
+function digits(m) { const x = String(m || '').replace(/\D/g, ''); return x.length === 10 ? '91' + x : x; }
+function callLink(m) { const d = digits(m); return d ? `<a class="cl call" href="tel:+${d}">${ic('phone')}Call</a>` : ''; }
+function waLink(m) { const d = digits(m); return d ? `<a class="cl wa" href="https://wa.me/${d}" target="_blank" rel="noopener">${ic('chat')}WhatsApp</a>` : ''; }
+function modal(title, body, foot, wide) { $('#ovT').textContent = title; $('#ovB').innerHTML = body; $('#ovF').innerHTML = foot || ''; $('#ovBox').classList.toggle('wide', !!wide); $('#ov').classList.add('open'); }
+function closeM() { $('#ov').classList.remove('open'); $('#ovB').innerHTML = ''; $('#ovF').innerHTML = ''; }
+function copyText(s) { try { navigator.clipboard.writeText(s); toast('Copied'); } catch (e) { toast('Copy manually'); } }
+function downloadCsv(name, text) { const b = new Blob(['\uFEFF' + text], { type: 'text/csv;charset=utf-8' }); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+function avatarHtml(name, url) { return url ? `<img src="${esc(url)}" alt="">` : esc((name || 'S').charAt(0).toUpperCase()); }
+async function leave(expired) { if (!expired && TOKEN) { try { await apiCall('apiLogout', [TOKEN]); } catch (e) {} } localStorage.removeItem(LS_S); goPage('index.html'); }
+
+/* ============ NAV ============ */
+const GROUPS = [
+  { title: 'Main', items: [
+    { k: 'dash', l: 'Dashboard', ic: 'dashboard', v: 'dash' },
+    { k: 'users', l: 'Users', ic: 'users', v: 'people', a: { role: 'user' } },
+    { k: 'imams', l: 'Imams', ic: 'imam', v: 'people', a: { role: 'imam' } },
+    { k: 'members', l: 'Members', ic: 'members', v: 'people', a: { role: 'member' } }
+  ]},
+  { title: 'Community', items: [
+    { k: 'madrasa', l: 'Madrasa', ic: 'madrasa', v: 'sec', a: { sec: 'madrasa' } },
+    { k: 'masjid', l: 'Masjid', ic: 'masjid', v: 'sec', a: { sec: 'masjid' } },
+    { k: 'eidgah', l: 'Eidgah', ic: 'eidgah', v: 'sec', a: { sec: 'eidgah' } },
+    { k: 'kabristan', l: 'Kabristan', ic: 'kabristan', v: 'sec', a: { sec: 'kabristan' } },
+    { k: 'posts', l: 'Madrasa posts', ic: 'madrasa', v: 'posts' },
+    { k: 'notice', l: 'Notices', ic: 'alert', v: 'notice' },
+    { k: 'kharch', l: 'Kharch (expenses)', ic: 'rates', v: 'kharch' }
+  ]},
+  { title: 'Admin', items: [
+    { k: 'penalty', l: 'Penalty', ic: 'money', v: 'penalty' },
+    { k: 'admins', l: 'Admins', ic: 'admin', v: 'admins' },
+    { k: 'search', l: 'Search', ic: 'search', v: 'search' },
+    { k: 'import', l: 'Import / Export', ic: 'import', v: 'import' },
+    { k: 'rates', l: 'Rates & Year', ic: 'rates', v: 'rates' },
+    { k: 'settings', l: 'Settings', ic: 'settings', v: 'settings' },
+    { k: 'profile', l: 'My profile', ic: 'profile', v: 'profile' }
+  ]}
+];
+function isOn(n) {
+  if (n.v === 'dash') return D.view === 'dash';
+  if (n.a && n.a.role) return D.view === 'people' && D.arg.role === n.a.role;
+  if (n.a && n.a.sec) return D.view === 'sec' && D.arg.sec === n.a.sec;
+  return D.view === n.v;
+}
+function drawNav() {
+  let h = '';
+  GROUPS.forEach(g => {
+    h += `<div class="sgroup">${g.title}</div>` + g.items.map(n =>
+      `<button class="sitem ${isOn(n) ? 'on' : ''}" data-go="${n.v}" data-arg='${JSON.stringify(n.a || {})}' data-l="${esc(n.l.toLowerCase())}">
+        <span class="si">${iconHtml(n.ic)}</span><span class="sl">${n.l}</span></button>`).join('');
+  });
+  h += `<div class="sgroup">Account</div><button class="sitem logout" data-act="logout" data-l="logout"><span class="si">${ic('logout')}</span><span class="sl">Logout</span></button>`;
+  $('#sideNav').innerHTML = h;
+}
+function filterNav(q) {
+  q = (q || '').trim().toLowerCase();
+  const nav = $('#sideNav'); if (!nav) return;
+  let grp = null, shown = false;
+  Array.prototype.forEach.call(nav.children, el => {
+    if (el.classList.contains('sgroup')) { grp = el; shown = false; el.style.display = 'none'; return; }
+    if (el.classList.contains('sitem')) {
+      const ok = !q || (el.dataset.l || el.textContent.toLowerCase()).includes(q);
+      el.style.display = ok ? '' : 'none';
+      if (ok && grp && !shown) { grp.style.display = ''; shown = true; }
+    }
+  });
+}
+const isDesk = () => window.innerWidth >= 960;
+function hideDrawer() { $('#side').classList.remove('open'); $('#scrim').classList.remove('on'); }
+$('#menuBtn').addEventListener('click', () => { if (isDesk()) document.body.classList.remove('side-closed'); else { $('#side').classList.add('open'); $('#scrim').classList.add('on'); } });
+$('#sideClose').addEventListener('click', () => { if (isDesk()) document.body.classList.add('side-closed'); else hideDrawer(); });
+$('#scrim').addEventListener('click', hideDrawer);
+document.addEventListener('input', e => { if (e.target.id === 'navSearch') filterNav(e.target.value); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') hideDrawer(); });
+
+const VIEWS = {};
+async function go(view, arg) {
+  D = { view, arg: arg || {} };
+  hideDrawer(); drawNav(); window.scrollTo(0, 0);
+  const c = $('#main');
+  c.innerHTML = '<div class="loading">Loading…</div>';
+  try { await VIEWS[view](c, D.arg); }
+  catch (e) { if (e.message !== 'expired') c.innerHTML = `<div class="errbox">${esc(e.message)}</div>`; }
+}
+
+/* ============ DASHBOARD ============ */
+VIEWS.dash = async (c) => {
+  const [o, r, expTry, salTry] = await Promise.all([
+    api('apiSuperOverview'), api('apiDashboard'), api('apiExpenseList').catch(() => ({ list: [] })), api('apiSalaryTotal').catch(() => ({ total: 0 }))
+  ]);
+  ADMINS = o.admins || [];
+  const expensesTotal = (expTry.list || []).reduce((a, x) => a + (x.total || 0), 0);
+  const salaryTotal = salTry.total || 0;
+  const collected = o.collected || 0;
+  const netBalance = collected - expensesTotal - salaryTotal;
+  const arrow = '<span class="go">' + ic('arrow') + '</span>';
+  const big = (cls, k, l, v, view, arg) => `<button class="big ${cls}" data-go="${view}" data-arg='${JSON.stringify(arg || {})}'><span class="ic">${iconHtml(k)}</span><span><span class="lb">${l}</span><b>${v}</b></span>${arrow}</button>`;
+  const tile = (cls, k, l, v, view, arg) => `<button class="tile ${cls}" data-go="${view}" data-arg='${JSON.stringify(arg || {})}'><span class="ti">${iconHtml(k)}</span><span class="tx"><span class="lb">${l}</span><b>${v}</b></span></button>`;
+  c.innerHTML = `
+    <div class="pagehead"><h2>Dashboard</h2></div>
+    <p class="psub">Welcome, ${esc(ME.name)} · Year ${o.year}</p>
+    <div class="big3">
+      ${big('g-blue', 'users', 'Users', o.counts.user || 0, 'people', { role: 'user' })}
+      ${big('g-orange', 'imam', 'Imams', o.counts.imam || 0, 'people', { role: 'imam' })}
+      ${big('g-purple', 'members', 'Members', o.counts.member || 0, 'people', { role: 'member' })}
+    </div>
+    <div class="sec-title"><h3>Total count</h3><a data-go="people" data-arg='{}'>View All →</a></div>
+    <div class="tiles">
+      ${tile('t-blue', 'users', 'Users', o.counts.user || 0, 'people', { role: 'user' })}
+      ${tile('t-orange', 'imam', 'Imams', o.counts.imam || 0, 'people', { role: 'imam' })}
+      ${tile('t-purple', 'members', 'Members', o.counts.member || 0, 'people', { role: 'member' })}
+      ${tile('t-blue', 'madrasa', 'Madrasa', o.sections.madrasa || 0, 'sec', { sec: 'madrasa' })}
+      ${tile('t-green', 'masjid', 'Masjid', o.sections.masjid || 0, 'sec', { sec: 'masjid' })}
+      ${tile('t-orange', 'eidgah', 'Eidgah', o.sections.eidgah || 0, 'sec', { sec: 'eidgah' })}
+      ${tile('t-red wide', 'kabristan', 'Kabristan', o.sections.kabristan || 0, 'sec', { sec: 'kabristan' })}
+    </div>
+    <div class="sec-title"><h3>Fund overview</h3></div>
+    <div class="tiles">
+      ${tile('t-green', 'money', 'Collected', inr(collected), 'people', { role: 'user' })}
+      ${tile('t-red', 'alert', 'Expenses', inr(expensesTotal), 'kharch', {})}
+      ${tile('t-purple', 'imam', 'Salary paid', inr(salaryTotal), 'people', { role: 'imam' })}
+      ${tile(netBalance >= 0 ? 't-blue' : 't-red', 'hourglass', 'Net balance', inr(netBalance), 'rates', {})}
+      ${tile('t-green', 'check', 'Paid users', o.paidCnt, 'people', { role: 'user', status: 'paid' })}
+      ${tile('t-red', 'alert', 'Due users', o.dueCnt, 'people', { role: 'user', status: 'due' })}
+      ${tile('t-gold wide', 'rates', 'Rate ' + o.year, inr(o.rate), 'rates')}
+    </div>
+    <div class="card"><h3 class="sec">Fund flow</h3>${drawMoneyBar(collected, expensesTotal, salaryTotal)}</div>
+    <div class="sec-title"><h3>Admins · click to see their people</h3></div>
+    <div class="tiles">
+      ${ADMINS.map(a => `<button class="tile t-purple" data-go="people" data-arg='${JSON.stringify({ adminId: a.adminId })}'>
+        <span class="ti">${iconHtml('admin')}</span><span class="tx"><span class="lb"><b style="font-size:14px">${esc(a.name)}</b></span>
+        <span class="lb">M ${a.members} · I ${a.imams} · U ${a.users}</span></span></button>`).join('') || '<div class="empty">No admins yet.</div>'}
+    </div>
+    <div class="sec-title"><h3>Recent payments</h3></div>
+    <div class="card"><div class="wrap"><table class="t">
+      <thead><tr><th>Date</th><th>Name</th><th>Mode</th><th>Collector</th><th>Amount</th></tr></thead>
+      <tbody>${r.recent.map(x => `<tr><td>${esc(x.date)}</td><td>${esc(x.name)}</td><td>${esc(x.mode)}</td><td>${esc(x.collector)}</td><td><b>${inr(x.amount)}</b></td></tr>`).join('') || '<tr><td colspan="5" class="muted">No payments yet.</td></tr>'}</tbody>
+    </table></div></div>`;
+};
+
+/* ============ PEOPLE LIST ============ */
+VIEWS.people = async (c, arg) => {
+  const role = arg.role || ''; const status = arg.status || 'all'; const adminId = arg.adminId || '';
+  const [d, o] = await Promise.all([api('apiSuperPeople', role, status, adminId), api('apiSuperOverview')]);
+  ADMINS = o.admins || []; PEOPLE_CACHE = d.list;
+
+  const title = role ? (role === 'user' ? 'Users' : role === 'imam' ? 'Imams' : 'Members') : 'All people';
+  const chip = (s, l) => `<button class="chipbtn ${status === s ? 'on' : ''}" data-go="people" data-arg='${JSON.stringify({ role, adminId, status: s })}'>${l}</button>`;
+
+  c.innerHTML = `
+    <div class="pagehead"><h2>${title}</h2></div>
+    <p class="psub">${d.list.length} records</p>
+    <div class="toolbar">
+      <input class="inp" id="q" placeholder="Search name, mobile or App no.">
+      ${role === 'user' ? `<div class="chips">${chip('all', 'All')}${chip('paid', 'Paid')}${chip('due', 'Due')}</div>` : ''}
+      <select class="inp" id="fAdm" style="max-width:200px"><option value="">All admins</option>
+        ${ADMINS.map(a => `<option value="${esc(a.adminId)}" ${a.adminId === adminId ? 'selected' : ''}>${esc(a.name)}</option>`).join('')}</select>
+      <button class="btn light sm" data-act="toggleCreds">${ic('lock')}${SHOW_CREDS ? 'Hide' : 'Show'} passwords</button>
+      <button class="btn orange sm" data-act="resetAllTokens">${ic('refresh')}Reset tokens</button>
+      <button class="btn green sm" data-act="addPerson" data-id="${role || 'member'}">${ic('plus')}Add</button>
+    </div>
+    <div class="card" style="padding:0"><div class="wrap" id="tbl"></div></div>`;
+
+  $('#fAdm').addEventListener('change', e => go('people', { role, status, adminId: e.target.value }));
+  $('#q').addEventListener('input', drawRows);
+  drawRows();
+
+  function drawRows() {
+    const q = ($('#q').value || '').trim().toLowerCase();
+    const rows = PEOPLE_CACHE.filter(p => !q || p.name.toLowerCase().includes(q) || String(p.mobile).includes(q) || p.appNo.includes(q));
+
+    let head = `<tr><th>#</th><th>App no.</th><th>Name</th><th>Mobile</th><th>Role</th><th>Admin</th>`;
+    if (role === 'user') head += `<th>Due</th><th>Paid</th><th>Balance</th>`;
+    if (role === 'imam') head += `<th>Salary</th>`;
+    head += `<th>Status</th>${SHOW_CREDS ? '<th>Password</th><th>Token</th>' : ''}<th>Actions</th></tr>`;
+
+    const body = rows.map((p, i) => {
+      const st = p.blocked ? '<span class="chip c-blk">Blocked</span>'
+        : p.role === 'user' ? (p.tag === 'paid' ? '<span class="chip c-paid">Paid</span>' : '<span class="chip c-due">Due</span>')
+        : p.role === 'imam' ? '<span class="chip c-imam">Imam</span>' : '<span class="chip c-role">Member</span>';
+      const cls = p.role === 'user' ? (p.tag === 'paid' ? 'row-paid' : 'row-due') : '';
+
+      let cols = `<td>${i + 1}</td><td class="mono"><b>${esc(p.appNo)}</b></td>
+        <td><button class="nm" data-act="openPerson" data-id="${esc(p.appNo)}">${esc(p.name)}</button></td>
+        <td>${esc(p.mobile || '—')} <span style="display:inline-flex;margin-left:4px">${waLink(p.mobile)}</span></td>
+        <td><span class="chip c-role">${esc(LBL[p.role] || p.role)}</span></td>
+        <td>${esc(p.adminName || '—')}</td>`;
+
+      if (role === 'user') cols += `<td>${inr(p.due)}</td><td>${inr(p.paid)}</td><td><b>${inr(p.baki)}</b></td>`;
+      if (role === 'imam') cols += `<td>${inr(p.salary)}/mo</td>`;
+
+      cols += `<td>${st}</td>${SHOW_CREDS ? `<td class="mono">${esc(p.passwordPlain || '—')}</td><td class="mono">${esc(p.tokenPlain || '—')}</td>` : ''}`;
+      cols += `<td><div class="acts">
+          <button class="btn light sm" data-act="openPerson" data-id="${esc(p.appNo)}">View</button>
+          <button class="btn light sm" data-act="editPerson" data-id="${esc(p.appNo)}">Edit</button>
+          <button class="btn sm ${p.blocked ? 'green' : 'gold'}" data-act="toggleBlock" data-id="${esc(p.appNo)}" data-st="${p.blocked ? 'ACTIVE' : 'BLOCKED'}">${p.blocked ? 'Unblock' : 'Block'}</button>
+          <button class="btn red sm" data-act="delPerson" data-id="${esc(p.appNo)}">Delete</button>
+        </div></td>`;
+      return `<tr class="${cls}">${cols}</tr>`;
+    }).join('');
+
+    $('#tbl').innerHTML = `<table class="t"><thead>${head}</thead><tbody>${body || '<tr><td colspan="14" class="muted">No records.</td></tr>'}</tbody></table>`;
+  }
+};
+
+/* ============ PERSON PAGE ============ */
+async function openPersonPage(c, appNo) {
+  const d = await api('apiSuperGetPerson', appNo);
+  const p = d.person;
+  const isUser = p.role === 'user'; const isImam = p.role === 'imam';
+  CUR_PERSON = { appNo: p.appNo, role: p.role, name: p.name, father: p.father, mobile: p.mobile, email: p.email, address: p.address, joinIso: p.joinIso, adminId: p.adminId, opening: (d.summary && d.summary.opening) || 0, salary: (d.salary && d.salary.current) || 0, qualification: p.qualification, whatsapp: p.whatsapp, photoUrl: p.photoUrl };
+  const contact = p.role === 'imam' && p.whatsapp ? p.whatsapp : p.mobile;
+
+  c.innerHTML = `
+    <div class="toolbar"><button class="btn light sm" data-go="people" data-arg='{}'>← Back</button></div>
+    <div class="card profile">
+      <div class="dp" data-act="dpMenu" data-target="person">${avatarHtml(p.name, p.photoUrl)}</div>
+      <div class="appid"><small>Application ID</small>${esc(p.appNo)}</div>
+      <div class="pname">${esc(p.name)}</div>
+      <div class="acts" style="justify-content:center">
+        <span class="chip c-role">${esc(LBL[p.role] || p.role)}</span>
+        ${p.blocked ? '<span class="chip c-blk">Blocked</span>' : ''}
+      </div>
+      <div class="acts" style="justify-content:center">${callLink(p.mobile)}${waLink(contact)}</div>
+      <div class="info" style="width:100%">
+        <div><span>Father's name</span><b>${esc(p.father || '—')}</b></div>
+        <div><span>Mobile</span><b>${esc(p.mobile || '—')}</b></div>
+        <div><span>Email</span><b>${esc(p.email || '—')}</b></div>
+        <div><span>Address</span><b>${esc(p.address || '—')}</b></div>
+        <div><span>Join date</span><b>${esc(p.joinDate || '—')}</b></div>
+        <div><span>Admin</span><b>${esc(p.adminName || '—')}</b></div>
+        ${p.role === 'imam' ? `<div><span>Qualification</span><b>${esc(p.qualification || '—')}</b></div>
+                                <div><span>WhatsApp</span><b>${esc(p.whatsapp || '—')}</b></div>` : ''}
+      </div>
+      <div class="acts" style="justify-content:center;margin-top:8px">
+        <button class="btn light sm" data-act="editPerson" data-id="${esc(appNo)}">${ic('edit')}Edit</button>
+        ${isUser ? `<button class="btn green sm" data-act="pay" data-id="${esc(appNo)}">${ic('rupee')}Receive payment</button>` : ''}
+        ${isImam ? `<button class="btn purple sm" data-act="payout" data-id="${esc(appNo)}">${ic('money')}Salary payout</button>` : ''}
+        ${isUser && d.summary.opening > 0 ? `<button class="btn gold sm" data-act="addPenaltyForPerson" data-id="${esc(appNo)}">${ic('alert')}Add penalty</button>` : ''}
+        <button class="btn gold sm" data-act="toggleBlock" data-id="${esc(appNo)}" data-st="${p.blocked ? 'ACTIVE' : 'BLOCKED'}">${p.blocked ? 'Unblock' : 'Block'}</button>
+        <button class="btn red sm" data-act="delPerson" data-id="${esc(appNo)}">${ic('trash')}Delete</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="sec">Login details</h3>
+      <div class="creds">
+        <div class="cred"><div><span>Password</span><b id="pwV">••••••••••</b></div>
+          <button class="btn light sm" data-act="showPw" data-f="pwV" data-v="${esc((d.person.passwordPlain) || '')}">${ic('eye')}</button></div>
+        <div class="cred"><div><span>Token ID</span><b id="tkV">••••••</b></div>
+          <button class="btn light sm" data-act="showPw" data-f="tkV" data-v="${esc((d.person.tokenPlain) || '')}">${ic('eye')}</button></div>
+      </div>
+      <div class="acts" style="margin-top:10px">
+        <button class="btn light sm" data-act="resetOne" data-id="${esc(appNo)}" data-what="password">Reset password</button>
+        <button class="btn light sm" data-act="resetOne" data-id="${esc(appNo)}" data-what="token">Reset token</button>
+        <button class="btn light sm" data-act="resetOne" data-id="${esc(appNo)}" data-what="both">Reset both</button>
+      </div>
+    </div>
+    ${isImam ? `
+      <div class="card"><h3 class="sec">Salary history</h3>
+        <div class="wrap"><table class="t"><thead><tr><th>Effective</th><th>Amount</th><th>Set by</th></tr></thead>
+        <tbody>${((d.salary && d.salary.history) || []).map(h => `<tr><td>${esc(h.effective)}</td><td>${inr(h.amount)}</td><td>${esc(h.setBy)}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">No salary set yet.</td></tr>'}</tbody></table></div></div>
+      <div class="card"><h3 class="sec">Salary payouts</h3>
+        <div class="wrap"><table class="t"><thead><tr><th>Date</th><th>Amount</th><th>Mode</th><th>Txn no.</th><th>Paid by</th><th>Receipt</th></tr></thead>
+        <tbody>${((d.salary && d.salary.payouts) || []).map(x => `<tr><td>${esc(x.date)}</td><td>${inr(x.amount)}</td><td>${esc(x.mode)}</td><td>${esc(x.txnRef || '—')}</td><td>${esc(x.collector)}</td><td>${x.receiptId ? `<button class="btn light sm" data-act="receipt" data-id="${esc(x.receiptId)}">${ic('eye')}</button>` : '—'}</td></tr>`).join('') || '<tr><td colspan="6" class="muted">No payouts yet.</td></tr>'}</tbody></table></div></div>`
+    : isUser ? `
+      <div class="sum">
+        <div class="sumc" style="background:linear-gradient(135deg,#64748b,#334155)"><span>Total due</span><b>${inr(d.summary.due)}</b></div>
+        <div class="sumc" style="background:linear-gradient(135deg,#12a150,#34c77a)"><span>Paid this year</span><b>${inr(d.summary.paid)}</b></div>
+        <div class="sumc" style="background:linear-gradient(135deg,#e5484d,#ff7a7d)"><span>Balance</span><b>${inr(d.summary.baki)}</b></div>
+        <div class="sumc" style="background:linear-gradient(135deg,#c99a2e,#e8c15a)"><span>Back-year due</span><b>${inr(d.summary.opening)}</b></div>
+      </div>
+      ${(d.penalty && d.penalty.total > 0) ? `<div class="card pen-box">
+        <div class="pen-row" style="border:0"><b>Back year penalty</b><b style="color:#b42328;font-size:18px">${inr(d.penalty.total)}</b></div>
+        ${d.penalty.list.map(x => `<div class="pen-row"><span>${x.year} saal · ${esc(x.reason || '')} <span class="muted">${esc(x.date)}</span></span>
+          <span><b>${inr(x.amount)}</b> <button class="btn red sm" data-act="delPenalty" data-id="${esc(x.id)}">×</button></span></div>`).join('')}
+      </div>` : ''}
+      <div class="card"><h3 class="sec">Receipts</h3>
+        <div class="wrap"><table class="t"><thead><tr><th>Receipt ID</th><th>Issued</th><th>Total paid</th><th>Balance</th><th></th></tr></thead>
+        <tbody>${d.receipts.map(r => `<tr><td class="mono"><b>${esc(r.receiptId)}</b></td><td>${esc(r.issued)}</td><td>${inr(r.totalPaid)}</td><td>${inr(r.balance)}</td>
+          <td><button class="btn light sm" data-act="receipt" data-id="${esc(r.receiptId)}">${ic('eye')}Receipt</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted">No receipts yet.</td></tr>'}</tbody></table></div></div>
+      <div class="card"><h3 class="sec">Khata book</h3>
+        <div class="wrap"><table class="t"><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Mode</th><th>Txn no.</th><th>Collector</th><th></th></tr></thead>
+        <tbody>${d.payments.map(x => `<tr>
+          <td>${esc(x.date)}</td>
+          <td>${x.direction === 'REVERSAL' ? '<span class="chip c-due">Reversal</span>' : '<span class="chip c-paid">Payment</span>'}</td>
+          <td><b>${inr(x.amount)}</b></td><td>${esc(x.mode)}</td><td>${esc(x.txnRef || '—')}</td><td>${esc(x.collector)}</td>
+          <td>${x.receiptId ? `<button class="btn light sm" data-act="receipt" data-id="${esc(x.receiptId)}">${ic('eye')}</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="7" class="muted">No transactions yet.</td></tr>'}</tbody></table></div></div>` : `<div class="empty">No financial data for Members.</div>`}`;
+}
+
+/* ============ ADD / EDIT PERSON FORM ============ */
+function personForm(role, p, admins) {
+  const v = k => p ? esc(p[k] ?? '') : '';
+  const isUser = role === 'user'; const isImam = role === 'imam';
+  const photoUrl = p && p.photoUrl ? esc(p.photoUrl) : '';
+  const prevStyle = photoUrl ? 'width:64px;height:64px;border-radius:50%;object-fit:cover;margin-top:6px' : 'display:none;width:64px;height:64px;border-radius:50%;object-fit:cover;margin-top:6px';
+
+  return `<div class="fgrid">
+    ${!p && !isUser ? `<div><label class="fl" style="color:var(--blue);font-weight:800">Custom User ID * (Required)<input class="inp" id="fAppNo" placeholder="Enter unique ID"></label></div>` : ''}
+    <div><label class="fl">Name *<input class="inp" id="fName" value="${v('name')}"></label></div>
+    <div><label class="fl">Father's name<input class="inp" id="fFather" value="${v('father')}"></label></div>
+    <div><label class="fl">Mobile<input class="inp" id="fMobile" maxlength="10" inputmode="numeric" value="${v('mobile')}"></label></div>
+    <div><label class="fl">Email<input class="inp" id="fEmail" value="${v('email')}"></label></div>
+    <div><label class="fl">Address<input class="inp" id="fAddr" value="${v('address')}"></label></div>
+    ${isImam ? `
+      <div><label class="fl">Qualification<input class="inp" id="fQual" value="${v('qualification')}"></label></div>
+      <div><label class="fl">WhatsApp<input class="inp" id="fWa" value="${v('whatsapp')}"></label></div>
+      <div><label class="fl">Monthly salary (₹)<input class="inp" id="fSal" type="number" min="0" value="${p ? esc(p.salary ?? '') : ''}"></label></div>`
+    : isUser ? `
+      <div><label class="fl">Back-year due (₹)<input class="inp" id="fOpen" type="number" min="0" value="${p ? esc(p.opening ?? 0) : 0}"></label></div>`
+    : ''}
+    <div><label class="fl">Join date<input class="inp" id="fJoin" type="date" value="${p ? esc(p.joinIso || '') : ''}"></label></div>
+    ${admins ? `<div><label class="fl">Admin (owner)<select class="inp" id="fAdmin">
+      ${admins.map(a => `<option value="${esc(a.adminId)}" ${p && p.adminId === a.adminId ? 'selected' : ''}>${esc(a.name)}</option>`).join('')}</select></label></div>` : ''}
+    <div><label class="fl">${p ? 'New password (empty = keep)' : 'Password (empty = auto)'}<input class="inp" id="fPass" placeholder="At least 8 characters"></label></div>
+    ${p ? '' : `<div><label class="fl">Token ID (empty = auto, 6 digits)<input class="inp" id="fTok" maxlength="6" inputmode="numeric"></label></div>`}
+    <div>
+      <label class="fl">Profile photo <span class="muted" style="font-weight:400">(optional)</span></label>
+      <input type="file" id="fPhoto" accept="image/*" class="inp">
+      <input type="hidden" id="fPhotoUrl" value="${photoUrl}">
+      <img id="fPrev" src="${photoUrl}" style="${prevStyle}" alt="">
+    </div>
+  </div>`;
+}
+async function openPersonForm(role, appNo) {
+  let p = null;
+  if (appNo) { const d = await api('apiSuperGetPerson', appNo); p = d.person; p.opening = (d.summary && d.summary.opening) || 0; p.salary = (d.salary && d.salary.current) || 0; role = p.role; }
+  let admins = null;
+  if (ME.role === 'super_admin') { const o = await api('apiSuperOverview'); admins = (o.admins || []).filter(a => a.status === 'ACTIVE'); if (!admins.length) admins = null; }
+
+  modal(p ? 'Edit · ' + p.name : 'Add · ' + (LBL[role] || role), personForm(role, p, admins), `<button class="btn light" data-act="close">Cancel</button><button class="btn green" id="btnSave">Save</button>`);
+
+  $('#btnSave').addEventListener('click', async () => {
+    const btn = $('#btnSave'); if (btn.disabled) return; btn.disabled = true;
+    try {
+      const body = {
+        isEdit:!!p,
+        appNo: p ? p.appNo : (document.getElementById('fAppNo') ? val('fAppNo') : ''),
+        role: role,
+        name: val('fName'), father: val('fFather'), mobile: val('fMobile'),
+        email: val('fEmail'), address: val('fAddr'), joinDate: val('fJoin'),
+        adminId: admins ? val('fAdmin') : '',
+        photoUrl: val('fPhotoUrl') || (p ? (p.photoUrl || '') : ''),
+        password: val('fPass'), token: p ? '' : val('fTok'),
+        qualification: val('fQual'), whatsapp: val('fWa'),
+        salary: val('fSal'), opening: val('fOpen') || 0
+      };
+      const r = await api('apiSuperSavePerson', body);
+      if (!p) return showCreds('New person added', r.appNo, r.password, r.token);
+      if (r.password || r.token) return showCreds('Login details updated', r.appNo, r.password, r.token);
+      closeM(); toast('Saved'); openPersonPage($('#main'), p.appNo);
+    } catch (e) { if (e.message !== 'expired') toast(e.message); } finally { btn.disabled = false; }
+  });
+}
+function showCreds(title, appNo, pw, tk) {
+  modal(title, `<div class="cred-box">
+      <div><div><small>App no. / User ID</small><b>${esc(appNo)}</b></div><button class="btn light sm" data-act="copy" data-v="${esc(appNo)}">Copy</button></div>
+      <div><div><small>Password</small><b>${esc(pw || '—')}</b></div><button class="btn light sm" data-act="copy" data-v="${esc(pw || '')}">Copy</button></div>
+      <div><div><small>Token ID</small><b>${esc(tk || '—')}</b></div><button class="btn light sm" data-act="copy" data-v="${esc(tk || '')}">Copy</button></div>
+    </div><p class="hint" style="margin-top:10px">Save these now. User can change password after first login.</p>`,
+    `<button class="btn green" data-act="closeAndOpen" data-id="${esc(appNo)}">Done</button>`);
+}
+
+/* ============ PAYMENTS ============ */
+async function openPay(appNo) {
+  const d = await api('apiSuperGetPerson', appNo);
+  const p = d.person, s = d.summary;
+  if (s.baki <= 0) return toast('No balance left.');
+
+  modal('Receive payment · ' + p.name, `
+    <p class="hint">Balance: <b>${inr(s.baki)}</b>${s.penalty > 0 ? ` (includes ${inr(s.penalty)} penalty)` : ''}.</p>
+    <div class="fgrid">
+      <div><label class="fl">Amount (₹)<input class="inp" id="pAmt" type="number" min="1" max="${s.baki}"></label></div>
+      <div><label class="fl">Date<input class="inp" id="pDate" type="date" value="${todayIso()}"></label></div>
+      <div><label class="fl">Mode<select class="inp" id="pMode">${MODES.map(m => `<option>${m}</option>`).join('')}</select></label></div>
+      <div><label class="fl">Transaction no. (online)<input class="inp" id="pTxn"></label></div>
+      ${s.opening > 0 ? `
+      <div style="grid-column:1/-1;background:#fff5f5;padding:10px;border-radius:10px;border:1px dashed #f6c6c8;margin-top:5px">
+        <div><label class="fl" style="color:#b42328">Add Penalty (₹) [Optional]<input class="inp" id="pPen" type="number" min="0" value="0"></label></div>
+        <div><label class="fl" style="color:#b42328">Penalty Reason<input class="inp" id="pPenReason" placeholder="e.g. Late payment"></label></div>
+      </div>` : ''}
+      <div><label class="fl">Note<input class="inp" id="pNote"></label></div>
+    </div>`,
+    `<button class="btn light" data-act="close">Cancel</button><button class="btn green" id="btnPay">Receive</button>`);
+
+  $('#btnPay').addEventListener('click', async () => {
+    const b = $('#btnPay'); if (b.disabled) return; b.disabled = true;
+    try {
+      const penAmt = Number(val('pPen'));
+      if (penAmt > 0) await api('apiPenaltyAdd', appNo, new Date().getFullYear(), penAmt, val('pPenReason'));
+      const r = await api('apiAddPayment', { appNo, amount: val('pAmt'), date: val('pDate'), mode: val('pMode'), txnRef: val('pTxn'), note: val('pNote') });
+      toast('Payment received');
+      openReceipt(r.receiptId);
+    } catch (e) { if (e.message !== 'expired') toast(e.message); b.disabled = false; }
+  });
+}
+function openPayout(appNo) {
+  modal('Salary payout', `<div class="fgrid">
+      <div><label class="fl">Amount (₹)<input class="inp" id="oAmt" type="number" min="1"></label></div>
+      <div><label class="fl">Date<input class="inp" id="oDate" type="date" value="${todayIso()}"></label></div>
+      <div><label class="fl">Mode<select class="inp" id="oMode">${MODES.map(m => `<option>${m}</option>`).join('')}</select></label></div>
+      <div><label class="fl">Transaction no. (online)<input class="inp" id="oTxn"></label></div>
+      <div><label class="fl">Note<input class="inp" id="oNote"></label></div></div>`,
+    `<button class="btn light" data-act="close">Cancel</button><button class="btn purple" id="btnOut">Save</button>`);
+
+  $('#btnOut').addEventListener('click', async () => {
+    const b = $('#btnOut'); if (b.disabled) return; b.disabled = true;
+    try {
+      const r = await api('apiAddSalaryPayout', appNo, val('oAmt'), val('oDate'), val('oMode'), val('oTxn'), val('oNote'));
+      closeM(); toast('Payout recorded');
+      openReceipt(r.receiptId);
+      openPersonPage($('#main'), appNo);
+    } catch (e) { if (e.message !== 'expired') toast(e.message); b.disabled = false; }
+  });
+}
+
+/* ============ PENALTY ============ */
+VIEWS.penalty = async (c) => {
+  const d = await api('apiPenaltyList');
+  c.innerHTML = `
+    <div class="pagehead"><h2>Penalty</h2></div>
+    <p class="psub">Penalty is applied to users with previous due balances.</p>
+    <div class="card"><div class="fgrid two">
+      <div><label class="fl">User App ID *<input class="inp" id="pApp" inputmode="numeric"></label></div>
+      <div><label class="fl">Year *<input class="inp" id="pYear" type="number" value="${new Date().getFullYear()}"></label></div>
+      <div><label class="fl">Penalty amount (₹) *<input class="inp" id="pAmt" type="number" min="1"></label></div>
+      <div><label class="fl">Reason<input class="inp" id="pReason" placeholder="Subscription not fully paid"></label></div>
+    </div>
+    <div style="margin-top:10px"><button class="btn red" data-act="addPenalty" style="width:100%">Apply penalty</button></div></div>
+    <div class="sec-title"><h3>All penalties · total ${inr(d.total)}</h3></div>
+    <div class="card" style="padding:0"><div class="wrap"><table class="t">
+      <thead><tr><th>App ID</th><th>Year</th><th>Reason</th><th>Date</th><th>Amount</th><th></th></tr></thead>
+      <tbody>${d.list.map(x => `<tr><td class="mono"><b>${esc(x.appNo)}</b></td><td>${x.year}</td><td>${esc(x.reason)}</td><td>${esc(x.date)}</td>
+        <td><b>${inr(x.amount)}</b></td>
+        <td><button class="btn red sm" data-act="delPenalty" data-id="${esc(x.id)}">Remove</button></td></tr>`).join('') || '<tr><td colspan="6" class="muted">No penalties yet.</td></tr>'}</tbody>
+    </table></div></div>`;
+};
+
+/* ============ KHARCH ============ */
+VIEWS.kharch = async (c) => {
+  const d = await api('apiExpenseList');
+  const total = d.list.reduce((a, x) => a + x.total, 0);
+  c.innerHTML = `
+    <div class="pagehead"><h2>Kharch (expenses)</h2></div>
+    <p class="psub">Each expense is a box. Add items; the receipt grows.</p>
+    <div class="sum">
+      <div class="sumc" style="background:linear-gradient(135deg,#e5484d,#ff7a7d)"><span>Total kharch</span><b>${inr(total)}</b></div>
+      <div class="sumc" style="background:linear-gradient(135deg,#1e6bff,#4f8dff)"><span>Boxes</span><b>${d.list.length}</b></div>
+    </div>
+    <div class="toolbar"><button class="btn green" data-act="newExp">${ic('plus')}Naya kharch</button></div>
+    <div class="card" style="padding:0"><div class="wrap"><table class="t">
+      <thead><tr><th>Kharch ka naam</th><th>Date</th><th>Items</th><th>Total</th><th></th></tr></thead>
+      <tbody>${d.list.map(x => `<tr><td><b>${esc(x.title)}</b></td><td>${esc(x.date)}</td><td>${x.count}</td><td><b>${inr(x.total)}</b></td>
+        <td><button class="btn light sm" data-act="expOpen" data-id="${esc(x.receiptId)}">${ic('eye')}Open</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted">No expenses yet.</td></tr>'}</tbody>
+    </table></div></div>`;
+};
+VIEWS.expOpen = async (c, arg) => {
+  const r = await api('apiExpenseView', arg.id);
+  c.innerHTML = `
+    <div class="toolbar">
+      <button class="btn light sm" data-go="kharch" data-arg='{}'>← Back</button>
+      <button class="btn sm" data-act="printNow">${ic('print')}Print / PDF</button>
+    </div>
+    <div class="card"><div class="fgrid two">
+      <div><label class="fl">Item name *<input class="inp" id="iTitle"></label></div>
+      <div><label class="fl">Date<input class="inp" id="iDate" type="date" value="${todayIso()}"></label></div>
+      <div style="grid-column:1/-1"><label class="fl">Description<textarea id="iDesc" rows="2"></textarea></label></div>
+      <div><label class="fl">Amount (₹) *<input class="inp" id="iAmt" type="number" min="1"></label></div>
+      <div style="display:flex;align-items:flex-end"><button class="btn green" data-act="addItem" data-id="${esc(arg.id)}" style="width:100%">Add item</button></div>
+    </div></div>
+    <div class="rc" id="rc">
+      <div class="rc-head"><div class="ttl" style="grid-column:1/-1"><h2>${esc(r.title)}</h2><p>Expense · ${esc(r.receiptId)} · ${esc(r.created)}</p></div></div>
+      <table class="rt"><thead><tr><th>#</th><th>Item</th><th>Description</th><th>Date</th><th style="text-align:right">Amount</th></tr></thead>
+      <tbody>${r.items.map(i => `<tr><td>${i.itemNo}</td><td>${esc(i.title)}</td><td style="white-space:normal">${esc(i.description)}</td>
+        <td>${esc(i.date)}</td><td style="text-align:right">${inr(i.amount)}</td></tr>`).join('') || '<tr><td colspan="5">No items yet.</td></tr>'}
+        <tr><td colspan="4" style="text-align:right"><b>TOTAL</b></td><td style="text-align:right"><b>${inr(r.total)}</b></td></tr></tbody></table>
+    </div>
+    <div class="card" style="margin-top:10px"><h3 class="sec">Remove items</h3>
+      ${r.items.map(i => `<div class="pen-row"><span>${i.itemNo}. ${esc(i.title)}</span>
+        <button class="btn red sm" data-act="delItem" data-id="${esc(arg.id)}" data-no="${i.itemNo}">Delete</button></div>`).join('') || '<div class="muted">No items.</div>'}
+    </div>`;
+};
+
+/* ============ NOTICES ============ */
+VIEWS.notice = async (c) => {
+  const n = await api('apiNoticeList');
+  c.innerHTML = `
+    <div class="pagehead"><h2>Notices</h2></div>
+    <p class="psub">Notices appear on every dashboard.</p>
+    <div class="card"><div class="fgrid">
+      <div><label class="fl">Title *<input class="inp" id="nTitle"></label></div>
+      <div><label class="fl">Message<textarea id="nBody" rows="3"></textarea></label></div>
+      <button class="btn green" data-act="postNotice">Post notice</button>
+    </div></div>
+    ${n.list.map(x => `<div class="rc-notice">
+      <div style="display:flex;justify-content:space-between;gap:8px">
+        <b>${esc(x.title)}</b>
+        <button class="btn red sm" data-act="delNotice" data-id="${esc(x.id)}">Delete</button>
+      </div>
+      <div class="muted" style="font-size:12px">${esc(x.date)} · ${esc(x.by)}</div>
+      <div style="margin-top:4px;white-space:pre-wrap">${esc(x.body)}</div>
+    </div>`).join('') || '<div class="empty">No notices yet.</div>'}`;
+};
+
+/* ============ POSTS ============ */
+VIEWS.posts = async (c) => {
+  const d = await api('apiPostList', 'madrasa');
+  c.innerHTML = `
+    <div class="pagehead"><h2>Madrasa posts</h2></div>
+    <p class="psub">Posts from Imam's Madrasa. Visible to everyone.</p>
+
+    <div class="toolbar">
+      <button class="btn green" data-act="newPost">${ic('plus')} Add New Post</button>
+    </div>
+
+    ${d.list.map(x => `
+    <div class="card" style="display:block; padding:20px; max-width:800px; margin:0 auto 20px; border-radius:16px; border:1px solid var(--line); box-shadow:0 4px 12px -4px rgba(0,0,0,.05);">
+      <h2 style="font-size:22px; color:var(--navy); margin-bottom:10px; font-weight:800; line-height:1.3;">${esc(x.title)}</h2>
+      <div style="font-size:13px; color:var(--muted); margin-bottom:18px; display:flex; gap:10px; align-items:center; border-bottom:1px solid var(--line); padding-bottom:12px;">
+        <span style="font-weight:600; color:var(--blue)">By ${esc(x.authorName)}</span>
+        <span>•</span>
+        <span>${esc(x.date)}</span>
+      </div>
+      ${x.photo ? `<img src="${esc(x.photo)}" alt="" style="width:100%; max-height:450px; object-fit:cover; border-radius:12px; margin-bottom:20px;">` : ''}
+      <p style="font-size:15px; line-height:1.8; color:var(--ink); margin-bottom:24px; white-space:pre-wrap;">${linkify(x.body)}</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; background:#f8fafc; padding:12px; border-radius:12px; border:1px solid var(--line);">
+        ${callLink(x.authorMobile)}
+        ${waLink(x.authorMobile)}
+        ${(ME.role === 'super_admin' || ME.role === 'admin') ? `<button class="btn red sm" style="margin-left:auto;" data-act="delPost" data-id="${esc(x.id)}">Delete</button>` : ''}
+      </div>
+    </div>`).join('') || '<div class="empty">No posts yet.</div>'}`;
+};
+
+/* ============ SECTIONS ============ */
+VIEWS.sec = async (c, arg) => {
+  const sec = arg.sec || 'madrasa';
+  const d = await api('apiSectionList', sec);
+  c.innerHTML = `
+    <div class="pagehead"><h2>${SECS[sec]}</h2></div>
+    <p class="psub">Updates, photos and news. Shown to everyone.</p>
+    <div class="toolbar"><button class="btn green" data-act="addSection" data-id="${sec}">${ic('plus')}Add update</button></div>
+    ${d.items.map(it => `
+    <div class="card" style="display:block; padding:20px; max-width:800px; margin:0 auto 20px; border-radius:16px; border:1px solid var(--line); box-shadow:0 4px 12px -4px rgba(0,0,0,.05);">
+      <h2 style="font-size:22px; color:var(--navy); margin-bottom:10px; font-weight:800; line-height:1.3;">${esc(it.title)}</h2>
+      <div style="font-size:13px; color:var(--muted); margin-bottom:18px; display:flex; gap:10px; align-items:center; border-bottom:1px solid var(--line); padding-bottom:12px;">
+        <span>${esc(it.date)}</span>
+      </div>
+      ${it.photo ? `<img src="${esc(it.photo)}" alt="" style="width:100%; max-height:450px; object-fit:cover; border-radius:12px; margin-bottom:20px;">` : ''}
+      <p style="font-size:15px; line-height:1.8; color:var(--ink); margin-bottom:24px; white-space:pre-wrap;">${linkify(it.body)}</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; border-top:1px solid var(--line); padding-top:15px;">
+        <button class="btn light sm" data-act="editSection" data-id="${esc(it.id)}" data-sec="${sec}">Edit</button>
+        <button class="btn red sm" data-act="delSection" data-id="${esc(it.id)}" data-sec="${sec}">Delete</button>
+      </div>
+    </div>`).join('') || '<div class="empty">No updates yet.</div>'}`;
+};
+function openSectionForm(sec, it) {
+  modal(`${it ? 'Edit' : 'Add'} · ${SECS[sec]}`, `<div class="fgrid">
+      <div><label class="fl">Title *<input class="inp" id="sTitle" value="${esc(it ? it.title : '')}"></label></div>
+      <div><label class="fl">Details<textarea id="sBody">${esc(it ? it.body : '')}</textarea></label></div>
+      <div><label class="fl">Photo File<input class="inp" type="file" id="sPhoto" accept="image/*"></label></div>
+      <div><label class="fl">OR Photo URL<input class="inp" id="sPhotoUrlText" placeholder="https://..."></label>
+        <input type="hidden" id="sPhotoUrl" value="${esc(it ? it.photo : '')}">
+        <img id="sPrev" src="${it && it.photo ? esc(it.photo) : ''}" style="${it && it.photo ? 'width:64px;height:64px;border-radius:12px;object-fit:cover;margin-top:6px' : 'display:none;width:64px;height:64px;border-radius:12px;object-fit:cover;margin-top:6px'}" alt=""></div>
+    </div>`,
+    `<button class="btn light" data-act="close">Cancel</button><button class="btn green" id="btnSec">Save</button>`);
+  $('#btnSec').addEventListener('click', async () => {
+    const b = $('#btnSec'); if (b.disabled) return; b.disabled = true;
+    try {
+      let finalUrl = val('sPhotoUrlText') || val('sPhotoUrl');
+      await api('apiSectionSave', { id: it ? it.id : '', section: sec, title: val('sTitle'), body: val('sBody'), photo: finalUrl });
+      closeM(); toast('Saved'); go('sec', { sec });
+    } catch (e) { if (e.message !== 'expired') toast(e.message); b.disabled = false; }
+  });
+}
+
+/* ============ ADMINS ============ */
+VIEWS.admins = async (c) => {
+  const [l, o] = await Promise.all([api('apiListAdmins'), api('apiSuperOverview')]);
+  ADMIN_LIST = l.list;
+  const counts = {};
+  (o.admins || []).forEach(a => counts[a.adminId] = a);
+  c.innerHTML = `
+    <div class="pagehead"><h2>Admins</h2></div>
+    <p class="psub">Only Super Admin creates admins.</p>
+    <div class="toolbar"><button class="btn green" data-act="addAdmin">${ic('plus')}Add admin</button></div>
+    ${l.list.map(a => {
+      const cc = counts[a.adminId] || { members: 0, imams: 0, users: 0 };
+      const isSuper = a.role === 'super_admin';
+      return `<div class="card"><div class="acts" style="justify-content:space-between">
+        <div><b>${esc(a.name)}</b> ${isSuper ? '<span class="chip c-role">Super</span>' : ''}
+        <div class="muted" style="font-size:12px">@${esc(a.username)} · ${esc(a.email)}</div>
+        <div style="font-size:12px;margin-top:4px">M ${cc.members} · I ${cc.imams} · U ${cc.users}</div></div>
+        ${a.status === 'ACTIVE' ? '<span class="chip c-paid">Active</span>' : '<span class="chip c-blk">Inactive</span>'}</div>
+        ${isSuper ? '' : `<div class="acts" style="margin-top:8px">
+          <button class="btn light sm" data-act="editAdmin" data-id="${esc(a.adminId)}">Edit</button>
+          <button class="btn light sm" data-act="resetAdmin" data-id="${esc(a.adminId)}">Reset password</button>
+          <button class="btn sm ${a.status === 'ACTIVE' ? 'gold' : 'green'}" data-act="toggleAdmin" data-id="${esc(a.adminId)}" data-st="${a.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'}">${a.status === 'ACTIVE' ? 'Block' : 'Unblock'}</button>
+          <button class="btn sm" data-go="people" data-arg='${JSON.stringify({ adminId: a.adminId })}'>People</button></div>`}
+      </div>`;
+    }).join('')}`;
+};
+function openAdminForm(a) {
+  modal(a ? 'Edit admin · ' + a.name : 'Add admin', `<div class="fgrid">
+    ${a ? '' : `<div><label class="fl">Username *<input class="inp" id="aUser" placeholder="4-20 characters"></label></div>`}
+    <div><label class="fl">Name *<input class="inp" id="aName" value="${esc(a ? a.name : '')}"></label></div>
+    <div><label class="fl">Mobile *<input class="inp" id="aMobile" maxlength="10" value="${esc(a ? a.mobile : '')}"></label></div>
+    <div><label class="fl">Email * (OTP sent here)<input class="inp" id="aEmail" value="${esc(a ? a.email : '')}"></label></div>
+    ${a ? `<div><label class="fl">Status<select class="inp" id="aStatus"><option value="ACTIVE" ${a.status === 'ACTIVE' ? 'selected' : ''}>Active</option><option value="INACTIVE" ${a.status === 'INACTIVE' ? 'selected' : ''}>Inactive</option></select></label></div>`
+        : `<div><label class="fl">Password (empty = auto)<input class="inp" id="aPass"></label></div>`}
+  </div>`,
+  `<button class="btn light" data-act="close">Cancel</button><button class="btn green" id="btnAdm">Save</button>`);
+  $('#btnAdm').addEventListener('click', async () => {
+    const b = $('#btnAdm'); if (b.disabled) return; b.disabled = true;
+    try {
+      const body = a ? { adminId: a.adminId, name: val('aName'), mobile: val('aMobile'), email: val('aEmail'), status: val('aStatus') }
+                     : { username: val('aUser'), name: val('aName'), mobile: val('aMobile'), email: val('aEmail'), password: val('aPass') };
+      const r = await api('apiSaveAdmin', body);
+      if (!a && r.password) {
+        modal('Admin created', `<div class="cred-box"><div><div><small>Username</small><b>${esc(body.username)}</b></div></div>
+          <div><div><small>Password</small><b>${esc(r.password)}</b></div><button class="btn light sm" data-act="copy" data-v="${esc(r.password)}">Copy</button></div></div>
+          <p class="hint" style="margin-top:10px">Admin must change this at first login.</p>`,
+          `<button class="btn green" data-go="admins" data-arg='{}'>Done</button>`);
+        return;
+      }
+      closeM(); toast('Saved'); go('admins', {});
+    } catch (e) { if (e.message !== 'expired') toast(e.message); b.disabled = false; }
+  });
+}
+
+/* ============ SEARCH ============ */
+VIEWS.search = async (c) => {
+  c.innerHTML = `<div class="pagehead"><h2>Search</h2></div>
+    <p class="psub">Name, mobile, App no. or receipt ID.</p>
+    <div class="toolbar"><input class="inp" id="sq" placeholder="Type and press Enter">
+      <button class="btn" id="sBtn">${ic('search')}Search</button></div><div id="sres"></div>`;
+  const run = async () => {
+    const r = await api('apiSearch', $('#sq').value);
+    $('#sres').innerHTML = `
+      <div class="card" style="padding:0"><div class="wrap"><table class="t"><thead><tr><th>App no.</th><th>Name</th><th>Mobile</th><th>Role</th><th></th></tr></thead>
+      <tbody>${r.people.map(p => `<tr><td class="mono"><b>${esc(p.appNo)}</b></td><td>${esc(p.name)}</td><td>${esc(p.mobile)}</td><td>${esc(LBL[p.role] || p.role)}</td>
+        <td><button class="btn light sm" data-act="openPerson" data-id="${esc(p.appNo)}">View</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted">No people found.</td></tr>'}</tbody></table></div></div>
+      <div class="card" style="padding:0;margin-top:10px"><div class="wrap"><table class="t"><thead><tr><th>Receipt ID</th><th>Issued</th><th>Name</th><th>Total paid</th><th></th></tr></thead>
+      <tbody>${r.receipts.map(x => `<tr><td class="mono"><b>${esc(x.receiptId)}</b></td><td>${esc(x.issued)}</td><td>${esc(x.name)}</td><td>${inr(x.totalPaid)}</td>
+        <td><button class="btn light sm" data-act="receipt" data-id="${esc(x.receiptId)}">${ic('eye')}View</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted">No receipts found.</td></tr>'}</tbody></table></div></div>`;
+  };
+  $('#sBtn').addEventListener('click', () => run().catch(e => { if (e.message !== 'expired') toast(e.message); }));
+  $('#sq').addEventListener('keydown', e => { if (e.key === 'Enter') $('#sBtn').click(); });
+};
+
+/* ============ IMPORT ============ */
+VIEWS.import = async (c) => {
+  c.innerHTML = `
+    <div class="pagehead"><h2>Import / Export</h2></div>
+    <p class="psub">Only Name is required. Other fields can be empty and edited later.</p>
+    <div class="card">
+      <h3 class="sec">1. Template or current data</h3>
+      <div class="acts"><button class="btn light sm" data-act="tplCsv">${ic('download')}Template</button>
+        <button class="btn light sm" data-act="dataCsv">${ic('download')}Export data</button></div>
+    </div>
+    <div class="card">
+      <h3 class="sec">2. Upload CSV (ek file, ek baar)</h3>
+      <p class="hint">Columns: User ID, Password, Token ID, Name, Father's Name, Mobile, Email, Address, Back year due, Current year subscription, Paid amount, Photo URL, Role.</p>
+      <input type="file" id="csvFile" accept=".csv,text/csv" class="inp">
+      <button class="btn green" id="btnImport" data-act="runImport" disabled style="margin-top:10px;width:100%">Import</button>
+      <p class="hint" id="csvInfo" style="margin-top:10px">${CSV_TEXT ? esc(CSV_NAME) + ' · ' + CSV_ROWS + ' rows ready' : 'No file selected.'}</p>
+      <div class="pbar"><i id="impBar"></i></div>
+      <div id="impText" class="muted" style="font-size:13px"></div>
+      <div id="impRes" style="margin-top:12px"></div>
+    </div>`;
+  if (CSV_TEXT && CSV_ROWS > 0 && !IMPORTING) $('#btnImport').disabled = false;
+};
+async function runImport() {
+  if (IMPORTING) return;
+  if (!CSV_TEXT) return toast('Select a CSV file first.');
+  IMPORTING = true;
+  const btn = $('#btnImport'); btn.disabled = true; $('#csvFile').disabled = true;
+  const lines = CSV_TEXT.split(/\r?\n/).filter(l => l.trim() !== '');
+  const header = lines[0], rows = lines.slice(1), total = rows.length;
+  let added = 0, done = 0; const errors = [];
+  try {
+    const batch = 40;
+    for (let i = 0; i < rows.length; i += batch) {
+      const chunk = rows.slice(i, i + batch);
+      $('#impText').textContent = 'Importing ' + (done + 1) + ' to ' + (done + chunk.length) + ' of ' + total + '…';
+      const r = await api('apiSuperImport', header + '\n' + chunk.join('\n'));
+      added += r.added;
+      r.errors.forEach(e => errors.push(e.replace(/Row (\d+):/, (m, n) => 'Row ' + (Number(n) + i + 1) + ':')));
+      done += chunk.length;
+      $('#impBar').style.width = Math.round(done / total * 100) + '%';
+      $('#impText').textContent = 'Imported ' + done + ' of ' + total + ' · added ' + added;
+    }
+    $('#impText').textContent = 'Done. Added ' + added + ' of ' + total + ' rows.';
+    $('#impRes').innerHTML = `<div class="cred-box"><div><div><small>Added</small><b>${added}</b></div></div>
+      <div><div><small>Errors</small><b>${errors.length}</b></div></div></div>
+      ${errors.length ? `<div class="card" style="margin-top:8px">${errors.map(e => `<div>${esc(e)}</div>`).join('')}</div>` : ''}`;
+    toast('Import complete');
+  } catch (e) { if (e.message !== 'expired') toast(e.message); }
+  finally {
+    IMPORTING = false;
+    CSV_TEXT = null; CSV_NAME = ''; CSV_ROWS = 0;
+    $('#csvFile').value = ''; $('#csvFile').disabled = false;
+    $('#csvInfo').textContent = 'Import finished. Select a NEW file to import again.';
+    btn.disabled = true;
+  }
+}
+
+/* ============ RATES ============ */
+VIEWS.rates = async (c) => {
+  const d = await api('apiListRates');
+  RATES = d;
+  c.innerHTML = `
+    <div class="pagehead"><h2>Rates & Year</h2></div>
+    <p class="psub">Rate changes apply from 1 January. Previous years do not change.</p>
+    <div class="tiles">
+      <div class="tile t-blue"><span class="ti">${ic('calendar')}</span><span class="tx"><span class="lb">Current year</span><b>${d.currentYear}</b></span></div>
+      <div class="tile t-gold"><span class="ti">${ic('rates')}</span><span class="tx"><span class="lb">Current rate</span><b>${inr(d.currentRate)}</b></span></div>
+    </div>
+    <div class="toolbar" style="margin-top:12px">
+      <button class="btn green sm" data-act="setRate">Set next year rate</button>
+      <button class="btn orange sm" data-act="rollYear">Start new year</button>
+    </div>
+    <div class="card" style="padding:0"><div class="wrap"><table class="t"><thead><tr><th>Year</th><th>Plan</th><th>Amount</th><th>Effective</th><th>Set by</th></tr></thead>
+    <tbody>${d.rates.map(r => `<tr><td>${r.year}</td><td>${esc(r.plan)}</td><td>${inr(r.amount)}</td><td>${esc(r.effective)}</td><td>${esc(r.setBy)}</td></tr>`).join('')}</tbody></table></div></div>`;
+};
+function openSetRate() {
+  const d = RATES;
+  modal('Set next year rate', `<div class="fgrid">
+      <div><label class="fl">Year<input class="inp" id="rY" type="number" value="${d.currentYear + 1}"></label></div>
+      <div><label class="fl">Amount (₹)<input class="inp" id="rA" type="number" value="${d.currentRate}"></label></div>
+      <div><label class="fl">Note<input class="inp" id="rN"></label></div></div>`,
+    `<button class="btn light" data-act="close">Cancel</button><button class="btn green" id="btnRate">Save</button>`);
+  $('#btnRate').addEventListener('click', async () => {
+    try { await api('apiSetRate', val('rY'), val('rA'), val('rN')); closeM(); toast('Rate saved'); go('rates', {}); }
+    catch (e) { if (e.message !== 'expired') toast(e.message); }
+  });
+}
+function openRoll() {
+  const d = RATES;
+  modal('Start new year', `<p class="hint">Each user's current balance becomes their back-year due. Run only once.</p>
+    <label class="fl">New year<input class="inp" id="yN" type="number" value="${d.currentYear + 1}"></label>`,
+    `<button class="btn light" data-act="close">Cancel</button><button class="btn orange" id="btnRoll">Start year</button>`);
+  $('#btnRoll').addEventListener('click', async () => {
+    try { const r = await api('apiSetCurrentYear', val('yN')); closeM(); toast('New year. ' + r.updated + ' balances carried.'); go('rates', {}); }
+    catch (e) { if (e.message !== 'expired') toast(e.message); }
+  });
+}
+
+/* ============ SETTINGS ============ */
+VIEWS.settings = async (c) => {
+  const [s, ic2] = await Promise.all([api('apiSuperGetOrg'), api('apiGetIcons')]);
+  ICONS = ic2.icons || {};
+  c.innerHTML = `
+    <div class="pagehead"><h2>Settings</h2></div>
+    <div class="card">
+      <h3 class="sec">Community</h3>
+      <div class="fgrid">
+        <div><label class="fl">Community name<input class="inp" id="sName" value="${esc(s.orgName)}"></label></div>
+        <div><label class="fl">Address<input class="inp" id="sAddr" value="${esc(s.orgAddress)}"></label></div>
+        <div><label class="fl">Registration no.<input class="inp" id="sReg" value="${esc(s.orgReg)}"></label></div>
+        <div><label class="fl">Logo URL<input class="inp" id="sLogo" value="${esc(s.logoUrl)}"></label></div>
+        <div><label class="fl">Header Background Image URL<input class="inp" id="sHeaderBg" value="${esc(s.headerBg || '')}" placeholder="https://..."></label></div>
+        <div><label class="fl">Seal / Mohar URL<input class="inp" id="sSeal" value="${esc(s.sealUrl)}"></label></div>
+        <div><label class="fl">Collector signature URL<input class="inp" id="sSigC" value="${esc(s.sigCollector)}"></label></div>
+        <div><label class="fl">Authorised signature URL<input class="inp" id="sSigA" value="${esc(s.sigAuth)}"></label></div>
+        <div><label class="fl">Drive folder ID (photos)<input class="inp" id="sDrive" value="${esc(s.driveFolderId)}"></label></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="sec">Dashboard icons</h3>
+      <p class="hint">Tap an icon to add or replace its image URL.</p>
+      <div class="icon-grid">
+        ${ICON_FIELDS.map(([k, l]) => `
+          <button class="icon-box ${ICONS[k] ? 'has' : ''}" data-act="editIcon" data-key="${k}" title="${l}">
+            ${ICONS[k] ? `<img src="${esc(ICONS[k])}" alt="">` : ic(k)}
+            <span>${l}</span>
+          </button>`).join('')}
+      </div>
+    </div>
+    <div class="acts"><button class="btn green" data-act="saveOrg">Save settings</button></div>`;
+};
+
+/* ============ MY PROFILE ============ */
+VIEWS.profile = async (c) => {
+  const [p, ph] = await Promise.all([api('apiMyProfile'), api('apiAdminGetPhoto')]);
+  MY_PHOTO = ph.url || '';
+  c.innerHTML = `
+    <div class="pagehead"><h2>My profile</h2></div>
+    <div class="card profile">
+      <div class="dp" data-act="dpMenu" data-target="me">${avatarHtml(p.profile.name, MY_PHOTO)}</div>
+      <div class="appid"><small>Username</small>${esc(p.profile.username)}</div>
+      <div class="pname">${esc(p.profile.name)}</div>
+      <div class="muted">${esc(LBL[p.profile.role] || p.profile.role)}</div>
+    </div>
+    <div class="card"><div class="fgrid">
+      <div><label class="fl">Name<input class="inp" id="mName" value="${esc(p.profile.name)}"></label></div>
+      <div><label class="fl">Father's name<input class="inp" id="mFather" value="${esc(p.profile.father)}"></label></div>
+      <div><label class="fl">Mobile<input class="inp" id="mMobile" maxlength="10" value="${esc(p.profile.mobile)}"></label></div>
+      <div><label class="fl">Email<input class="inp" id="mEmail" value="${esc(p.profile.email)}"></label></div>
+      <div><label class="fl">New password (optional)<input class="inp" type="password" id="mPw"></label></div>
+      <div><label class="fl">Confirm password<input class="inp" type="password" id="mPw2"></label></div>
+    </div></div>
+    <div class="acts"><button class="btn green" data-act="saveProfile">Save profile</button></div>`;
+};
+
+/* ============ NEW POST MODAL ============ */
+function openNewPostForm() {
+  modal('Create New Post', `<div class="fgrid">
+    <div><label class="fl">Title *<input class="inp" id="postTitle"></label></div>
+    <div><label class="fl">Content<textarea class="inp" id="postBody" rows="4"></textarea></label></div>
+    <div><label class="fl">Photo (Optional)<input class="inp" type="file" id="postPhoto" accept="image/*"></label></div>
+  </div>`, `<button class="btn light" data-act="close">Cancel</button><button class="btn green" id="btnPostSave">Publish</button>`);
+
+  $('#btnPostSave').addEventListener('click', async () => {
+    const btn = $('#btnPostSave'); if (btn.disabled) return; btn.disabled = true;
+    try {
+      let url = '';
+      const file = document.getElementById('postPhoto').files[0];
+      if (file) {
+        toast('Uploading photo...');
+        const compressed = await compressImage(file);
+        const r = await api('apiUploadPhoto', compressed.b64, compressed.mime, compressed.name);
+        url = r.url;
+      }
+      await api('apiPostCreate', 'madrasa', val('postTitle'), val('postBody'), url);
+      closeM(); toast('Post created'); go('posts', {});
+    } catch(e) { toast(e.message); btn.disabled = false; }
+  });
+}
+
+/* ============ ACTIONS ============ */
+const ACTS = {
+  newPost: () => openNewPostForm(),
+  logout: () => leave(false),
+  close: () => closeM(),
+  printNow: () => window.print(),
+  copy: (id, el) => copyText(el.dataset.v),
+  closeAndOpen: (id) => { closeM(); openPersonPage($('#main'), id).catch(e => { if (e.message !== 'expired') toast(e.message); }); },
+  toggleCreds: () => { SHOW_CREDS = !SHOW_CREDS; go(D.view, D.arg); },
+  showPw: (id, el) => {
+    const shown = el.dataset.on === '1';
+    const target = document.getElementById(el.dataset.f);
+    target.textContent = shown ? (el.dataset.f === 'pwV' ? '••••••••••' : '••••••') : (el.dataset.v || '—');
+    el.dataset.on = shown ? '0' : '1';
+  },
+  dpMenu: (id, el) => {
+    if (el.dataset.target === 'me') return openDpModal('me', MY_PHOTO);
+    return openDpModal('person', CUR_PERSON ? CUR_PERSON.photoUrl : '');
+  },
+  dpPick: (id, el) => { $('#ovF').dataset.target = el.dataset.target; $('#dpFile').click(); },
+  dpSave: async () => {
+    if (!DP_PENDING) return toast('Choose a photo first.');
+    const target = $('#ovF').dataset.target;
+    const f = DP_PENDING;
+    $('#dpHint').textContent = 'Uploading…';
+    try {
+      const r = await api('apiUploadPhoto', f.b64, f.mime, f.name);
+      await saveDpUrl(target, r.url);
+      DP_PENDING = null; toast('Photo saved'); closeM();
+      if (target === 'person') openPersonPage($('#main'), CUR_PERSON.appNo);
+      else if (D.view === 'profile') go('profile', {});
+    } catch (e) { toast('Upload failed: ' + e.message); $('#dpHint').textContent = 'Upload failed.'; }
+  },
+  dpDelete: async (id, el) => {
+    if (!confirm('Remove this photo?')) return;
+    try {
+      await saveDpUrl(el.dataset.target, '');
+      DP_PENDING = null; toast('Photo removed'); closeM();
+      if (el.dataset.target === 'person') openPersonPage($('#main'), CUR_PERSON.appNo);
+      else if (D.view === 'profile') go('profile', {});
+    } catch (e) { toast('Failed: ' + e.message); }
+  },
+  openPerson: (id) => { D = { view: 'person', arg: { id } }; drawNav(); openPersonPage($('#main'), id).catch(e => { if (e.message !== 'expired') toast(e.message); }); },
+  editPerson: (id) => openPersonForm(null, id).catch(e => { if (e.message !== 'expired') toast(e.message); }),
+  addPerson: (role) => openPersonForm(role, '').catch(e => { if (e.message !== 'expired') toast(e.message); }),
+  delPerson: async (id) => {
+    if (!confirm('Remove this person? History is kept.')) return;
+    await api('apiDeletePerson', id); toast('Removed'); go(D.view, D.arg);
+  },
+  toggleBlock: async (id, el) => {
+    await api('apiSuperSetStatus', id, el.dataset.st);
+    toast(el.dataset.st === 'BLOCKED' ? 'Blocked' : 'Unblocked');
+    if (D.view === 'person') openPersonPage($('#main'), id); else go(D.view, D.arg);
+  },
+  resetOne: async (id, el) => {
+    if (!confirm('Reset ' + el.dataset.what + '? Old one stops working.')) return;
+    const r = await api('apiSuperResetCreds', id, el.dataset.what);
+    showCreds('New login details', r.appNo, r.password, r.token);
+  },
+  resetAllTokens: async () => {
+    if (!confirm('Reset token ID for ALL persons?')) return;
+    const r = await api('apiSuperResetCreds', 'ALL', 'token');
+    toast('Tokens reset for ' + r.count + ' persons');
+    go(D.view, D.arg);
+  },
+  pay: (id) => openPay(id).catch(e => { if (e.message !== 'expired') toast(e.message); }),
+  payout: (id) => openPayout(id),
+  receipt: (id) => {
+    try {
+      const r = openReceipt(id);
+      if (r && typeof r.catch === 'function') r.catch(e => { if (e.message !== 'expired') toast(e.message); });
+    } catch (e) { if (e.message !== 'expired') toast(e.message); }
+  },
+  addPenaltyForPerson: (id) => {
+    D = { view: 'penalty', arg: {} };
+    go('penalty', {}).then(() => { setTimeout(() => { const inp = $('#pApp'); if (inp) inp.value = id; }, 300); });
+  },
+  addAdmin: () => openAdminForm(null),
+  editAdmin: (id) => openAdminForm(ADMIN_LIST.find(a => a.adminId === id)),
+  resetAdmin: async (id) => {
+    if (!confirm('Reset this admin password?')) return;
+    const a = ADMIN_LIST.find(x => x.adminId === id);
+    const r = await api('apiSaveAdmin', { adminId: a.adminId, name: a.name, mobile: a.mobile, email: a.email, status: a.status, resetPassword: true });
+    modal('New admin password', `<div class="cred-box"><div><div><small>Password</small><b>${esc(r.password)}</b></div>
+      <button class="btn light sm" data-act="copy" data-v="${esc(r.password)}">Copy</button></div></div>`, `<button class="btn green" data-act="close">Done</button>`);
+  },
+  toggleAdmin: async (id, el) => {
+    const a = ADMIN_LIST.find(x => x.adminId === id);
+    await api('apiSaveAdmin', { adminId: a.adminId, name: a.name, mobile: a.mobile, email: a.email, status: el.dataset.st });
+    toast('Saved'); go('admins', {});
+  },
+  addSection: (sec) => openSectionForm(sec, null),
+  editSection: async (id, el) => {
+    const d = await api('apiSectionList', el.dataset.sec);
+    openSectionForm(el.dataset.sec, d.items.find(x => x.id === id));
+  },
+  delSection: async (id, el) => {
+    if (!confirm('Remove this update?')) return;
+    await api('apiSectionDelete', id); toast('Removed'); go('sec', { sec: el.dataset.sec });
+  },
+  addPenalty: async () => {
+    await api('apiPenaltyAdd', val('pApp'), val('pYear'), val('pAmt'), val('pReason'));
+    toast('Penalty applied'); go('penalty', {});
+  },
+  delPenalty: async (id) => {
+    if (!confirm('Remove this penalty?')) return;
+    await api('apiPenaltyRemove', id); go(D.view, D.arg);
+  },
+  newExp: async () => {
+    const t = prompt('Expense name (e.g. Masjid repair):');
+    if (!t) return;
+    const r = await api('apiExpenseCreate', t);
+    go('expOpen', { id: r.receiptId });
+  },
+  expOpen: (id) => go('expOpen', { id }),
+  addItem: async (id) => {
+    await api('apiExpenseAddItem', id, val('iTitle'), val('iDesc'), val('iAmt'), val('iDate'));
+    toast('Item added'); go('expOpen', { id });
+  },
+  delItem: async (id, el) => {
+    if (!confirm('Remove this item?')) return;
+    await api('apiExpenseDeleteItem', id, el.dataset.no);
+    go('expOpen', { id });
+  },
+  postNotice: async () => {
+    await api('apiNoticePost', val('nTitle'), val('nBody'));
+    toast('Notice posted'); go('notice', {});
+  },
+  delNotice: async (id) => {
+    if (!confirm('Remove this notice?')) return;
+    await api('apiNoticeDelete', id); go('notice', {});
+  },
+  delPost: async (id) => {
+    if (!confirm('Remove this post?')) return;
+    await api('apiPostDelete', id); go('posts', {});
+  },
+  tplCsv: async () => { const r = await api('apiExportCsv', 'template'); downloadCsv(r.name, r.csv); },
+  dataCsv: async () => { const r = await api('apiExportCsv', 'data'); downloadCsv(r.name, r.csv); },
+  runImport: () => runImport(),
+  setRate: () => openSetRate(),
+  rollYear: () => openRoll(),
+  saveOrg: async () => {
+    await api('apiSuperSaveOrg', { orgName: val('sName'), orgAddress: val('sAddr'), orgReg: val('sReg'),
+      logoUrl: val('sLogo'), sealUrl: val('sSeal'), sigCollector: val('sSigC'), sigAuth: val('sSigA'),
+      driveFolderId: val('sDrive'),
+      headerBg:val('sHeaderBg')});
+    applyOrg({ name: val('sName'), logo: val('sLogo'), headerBg: val('sHeaderBg') });
+    toast('Settings saved'); go('settings', {});
+  },
+  saveProfile: async () => {
+    const r = await api('apiUpdateMyProfile', { name: val('mName'), father: val('mFather'), mobile: val('mMobile'),
+      email: val('mEmail'), password: val('mPw'), confirm: val('mPw2') });
+    ME.name = r.name;
+    $('#av').innerHTML = avatarHtml(r.name, MY_PHOTO);
+    toast('Profile saved'); go('profile', {});
+  },
+  editIcon: (id, el) => {
+    const key = el.dataset.key;
+    const current = ICONS[key] || '';
+    const label = (ICON_FIELDS.find(([k]) => k === key) || [key, key])[1];
+    modal(`Icon · ${label}`, `
+      <div style="text-align:center;margin-bottom:14px">
+        <div class="dp" style="width:88px;height:88px;font-size:38px;cursor:default;margin:0 auto" id="iconPrev">
+          ${current ? `<img src="${esc(current)}" alt="">` : ic(key, 44)}
+        </div>
+      </div>
+      <label class="fl">Image URL<input class="inp" id="iconUrl" value="${esc(current)}" placeholder="https://..."></label>
+      <p class="hint" style="margin-top:8px">Paste a direct image URL. Leave empty to reset.</p>
+    `, `<button class="btn light" data-act="close">Cancel</button>
+        ${current ? `<button class="btn red" data-act="iconClear" data-key="${key}">Reset</button>` : ''}
+        <button class="btn green" data-act="iconSave" data-key="${key}">Save</button>`);
+  },
+  iconSave: async (id, el) => {
+    const key = el.dataset.key;
+    const url = (val('iconUrl') || '').trim();
+    if (url && !/^https?:\/\//.test(url) && !url.startsWith('data:')) return toast('Enter a valid http(s) URL.');
+    const backup = ICONS[key];
+    ICONS[key] = url;
+    try { await api('apiSaveIcons', ICONS); toast('Icon saved'); closeM(); go('settings', {}); }
+    catch (e) { ICONS[key] = backup; toast('Failed: ' + e.message); }
+  },
+  iconClear: async (id, el) => {
+    const key = el.dataset.key;
+    const backup = ICONS[key];
+    ICONS[key] = '';
+    try { await api('apiSaveIcons', ICONS); toast('Icon reset'); closeM(); go('settings', {}); }
+    catch (e) { ICONS[key] = backup; toast('Failed: ' + e.message); }
+  }
+};
+
+/* ============ EVENTS ============ */
+document.addEventListener('click', async e => {
+  const g = e.target.closest('[data-go]');
+  if (g) { closeM(); try { return go(g.dataset.go, JSON.parse(g.dataset.arg || '{}')); } catch (err) { return toast(err.message); } }
+  if (e.target.closest('#av')) return go('profile', {});
+  const b = e.target.closest('[data-act]');
+  if (!b) return;
+  const fn = ACTS[b.dataset.act];
+  if (!fn) return;
+  try { await fn(b.dataset.id || '', b); }
+  catch (err) { if (err.message !== 'expired') toast(err.message); }
+});
+document.addEventListener('change', async e => {
+  if (e.target.id === 'csvFile') {
+    const f = e.target.files[0];
+    if (!f) { CSV_TEXT = null; CSV_ROWS = 0; $('#btnImport').disabled = true; return; }
+    CSV_TEXT = await f.text(); CSV_NAME = f.name;
+    CSV_ROWS = Math.max(0, CSV_TEXT.split(/\r?\n/).filter(l => l.trim() !== '').length - 1);
+    $('#csvInfo').textContent = f.name + ' · ' + CSV_ROWS + ' rows ready. Press Import once.';
+    $('#impBar').style.width = '0%'; $('#impText').textContent = '';
+    $('#btnImport').disabled = CSV_ROWS === 0;
+    return;
+  }
+  if (e.target.id === 'dpFile') {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    if (!/^image\//.test(f.type)) return toast('Please choose an image file.');
+    try {
+      $('#dpHint').textContent = 'Processing…';
+      const compressed = await compressImage(f);
+      DP_PENDING = compressed;
+      showDpPending('data:' + compressed.mime + ';base64,' + compressed.b64);
+      toast('Photo ready — press Save');
+    } catch (err) { toast('Could not process image: ' + err.message); }
+    return;
+  }
+  if (e.target.id === 'fPhoto' || e.target.id === 'sPhoto') {
+    const f = e.target.files[0]; if (!f) return;
+    if (!/^image\//.test(f.type)) return toast('Please choose an image file.');
+    try {
+      toast('Uploading…');
+      const compressed = await compressImage(f);
+      const r = await api('apiUploadPhoto', compressed.b64, compressed.mime, compressed.name);
+      const isPerson = e.target.id === 'fPhoto';
+      const urlField = $(isPerson ? '#fPhotoUrl' : '#sPhotoUrl');
+      const imgPrev = $(isPerson ? '#fPrev' : '#sPrev');
+      if (urlField) urlField.value = r.url;
+      if (imgPrev) { imgPrev.src = r.url; imgPrev.style.display = 'inline-block'; }
+      toast('Photo uploaded');
+    } catch (err) { if (err.message !== 'expired') toast('Upload failed: ' + err.message); }
+  }
+});
+
+function openDpModal(target, currentUrl) {
+  DP_PENDING = null;
+  modal(target === 'me' ? 'My photo' : 'Profile photo', `
+    <div class="profile">
+      <div class="dp" id="dpPrev">${avatarHtml(target === 'me' ? ME.name : (CUR_PERSON && CUR_PERSON.name), currentUrl)}</div>
+      <p class="hint" id="dpHint">${currentUrl ? 'Current photo. Choose Replace or Delete.' : 'No photo yet.'}</p>
+    </div>`,
+    `<div class="acts" style="width:100%;justify-content:center" id="dpBtns">
+       ${currentUrl ? `<button class="btn red sm" data-act="dpDelete" data-target="${target}">Delete</button>` : ''}
+       <button class="btn light sm" data-act="dpPick" data-target="${target}">${currentUrl ? 'Replace' : 'Choose photo'}</button>
+       <button class="btn light sm" data-act="close">Cancel</button>
+     </div>`);
+  $('#ovF').dataset.target = target;
+}
+function showDpPending(url) {
+  $('#dpPrev').innerHTML = `<img src="${esc(url)}" alt="">`;
+  $('#dpHint').textContent = 'New photo ready. Press Save or Replace.';
+  $('#dpBtns').innerHTML = `
+    <button class="btn green sm" data-act="dpSave">Save</button>
+    <button class="btn light sm" data-act="dpPick" data-target="${$('#ovF').dataset.target}">Replace</button>
+    <button class="btn light sm" data-act="close">Cancel</button>`;
+}
+async function saveDpUrl(target, url) {
+  if (target === 'me') {
+    await api('apiAdminSetPhoto', url);
+    MY_PHOTO = url;
+    $('#av').innerHTML = avatarHtml(ME.name, MY_PHOTO);
+  } else {
+    const p = CUR_PERSON; if (!p) return;
+    await api('apiSuperSavePerson', {
+      isEdit:true,
+      appNo: p.appNo, role: p.role, name: p.name, father: p.father, mobile: p.mobile,
+      email: p.email || '', address: p.address, joinDate: p.joinIso || '', adminId: p.adminId || '',
+      photoUrl: url, password: '', token: '',
+      qualification: p.qualification || '', whatsapp: p.whatsapp || '',
+      salary: p.salary ?? '', opening: p.opening || 0
+    });
+    CUR_PERSON.photoUrl = url;
+  }
+}
+
+function applyOrg(o) {
+  if (o.name !== undefined) {
+    $('#orgName').textContent = o.name || 'Community';
+    const sn = document.getElementById('sideName');
+    if (sn) sn.textContent = o.name || 'Community';
+  }
+
+  // HEADER BACKGROUND LOGIC
+  if (o.headerBg !== undefined) {
+    const hd = document.querySelector('.hd');
+    if (hd) {
+      if (o.headerBg) {
+        hd.style.background = `linear-gradient(135deg, rgba(7,28,64,0.8) 0%, rgba(15,61,127,0.8) 48%, rgba(10,42,92,0.8) 100%), url('${o.headerBg}') center/cover no-repeat`;
+      } else {
+        hd.style.background = 'linear-gradient(135deg, #071c40 0%, #0f3d7f 48%, #0a2a5c 100%)';
+      }
+    }
+  }
+
+  const seal = $('#seal');
+  if (seal) seal.innerHTML = o.logo ? `<img src="${esc(o.logo)}" alt="" onerror="this.remove()">` : ic('mosque', 46);
+  const sl = document.getElementById('sideLogo');
+  if (sl) sl.innerHTML = o.logo ? `<img src="${esc(o.logo)}" alt="">` : ic('mosque');
+}
+
+/* ============ BOOT ============ */
+async function boot() {
+  TOKEN = localStorage.getItem(LS_S);
+  if (!TOKEN) return goPage('index.html');
+  try {
+    bootProgress(15, 'Checking your login…', '');
+    const r = await apiCall('apiSession', [TOKEN]);
+    if (!r || !r.ok) return leave(true);
+    if (!r.user) return leave(true);
+    if (r.user.role !== 'super_admin') return goPage(ROLE_PAGE[r.user.role] || 'index.html');
+    if (r.mustChange) return goPage('index.html');
+    ME = r.user;
+    $('#roleName').textContent = 'Super Admin';
+    applyOrg({
+      name: (r.org && r.org.name) || 'Community',
+      logo: (r.org && r.org.logo) || '',
+      headerBg: (r.org && r.org.headerBg) || ''
+    });
+    bootProgress(35, 'Loading icons…', '');
+    const ic2 = await apiCall('apiGetIcons', [TOKEN]).catch(() => null);
+    ICONS = (ic2 && ic2.icons) || {};
+    bootProgress(55, 'Loading your profile…', '');
+    const ph = await apiCall('apiAdminGetPhoto', [TOKEN]).catch(() => null);
+    MY_PHOTO = (ph && ph.url) || '';
+    $('#av').innerHTML = avatarHtml(ME.name, MY_PHOTO);
+    bootProgress(75, 'Loading dashboard…', '');
+    startIdle();
+    await go('dash', {});
+    bootProgress(100, 'Ready', 'Welcome');
+    setTimeout(bootDone, 250);
+  } catch (e) { bootDone(); showError(e.message); }
+}
+let LAST = Date.now();
+function startIdle() {
+  ['mousemove', 'keydown', 'click', 'touchstart'].forEach(ev => document.addEventListener(ev, () => { LAST = Date.now(); }, { passive: true }));
+  setInterval(async () => {
+    if (!TOKEN) return;
+    if (Date.now() - LAST > 15 * 60 * 1000) { toast('Logged out after 15 minutes of inactivity.'); return leave(false); }
+    const r = await apiCall('apiSession', [TOKEN]).catch(() => null);
+    if (!r || !r.ok) leave(true);
+  }, 60000);
+}
+boot();
+</script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+    });
+  }
+  </script>
+</body>
+</html>
